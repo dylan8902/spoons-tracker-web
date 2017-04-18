@@ -1,6 +1,6 @@
 {
-  "name": "SpoonsTrackerWeb",
-  "description": "Application to track visits to various Wetherspoons across the UK",
+  "name": "spoons-tracker",
+  "description": "An app to track the Wetherspoons visits of Wetherspoons fans!",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0"

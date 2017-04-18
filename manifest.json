@@ -1,7 +1,7 @@
 {
-  "name": "SpoonsTrackerWeb",
-  "short_name": "SpoonsTrackerWeb",
-  "description": "Application to track visits to various Wetherspoons across the UK",
+  "name": "spoons-tracker",
+  "short_name": "spoons-tracker",
+  "description": "An app to track the Wetherspoons visits of Wetherspoons fans!",
   "start_url": "/",
   "display": "standalone"
 }

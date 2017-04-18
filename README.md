@@ -1,6 +1,6 @@
-# \<SpoonsTrackerWeb\>
+# \<spoons-tracker\>
 
-Application to track visits to various Wetherspoons across the UK
+An app to track the Wetherspoons visits of Wetherspoons fans!
 
 ## Install the Polymer-CLI
 
