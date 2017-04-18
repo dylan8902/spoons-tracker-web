@@ -1,0 +1,7 @@
+{
+  "name": "SpoonsTrackerWeb",
+  "short_name": "SpoonsTrackerWeb",
+  "description": "Application to track visits to various Wetherspoons across the UK",
+  "start_url": "/",
+  "display": "standalone"
+}
