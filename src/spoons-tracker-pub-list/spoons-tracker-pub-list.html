@@ -1,0 +1,30 @@
+<dom-module id="spoons-tracker-pub-list">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-query id="query" path="/pubs" data="{{data}}">
+    </firebase-query>
+
+    <div style="padding:16px">
+      <p>Maybe a map here?</p>
+      <ul>
+        <template is="dom-repeat" items="{{data}}" as="pub">
+          <li>[[decodePubName(pub.name)]]</li>
+        </template>
+      </ul>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'spoons-tracker-pub-list',
+
+      decodePubName: function (pubName) {
+        return decodeURI(pubName.replace(/\+/g, " "));
+      }
+    });
+  </script>
+</dom-module>

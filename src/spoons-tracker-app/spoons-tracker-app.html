@@ -2,47 +2,106 @@
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
-
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="../spoons-tracker-home/spoons-tracker-home.html">
+<link rel="import" href="../spoons-tracker-leaderboard/spoons-tracker-leaderboard.html">
+<link rel="import" href="../spoons-tracker-pub-list/spoons-tracker-pub-list.html">
+<link rel="import" href="../spoons-tracker-tracker/spoons-tracker-tracker.html">
 
 <dom-module id="spoons-tracker-app">
   <template>
     <style>
-      :host {
+       :host {
+        --app-primary-color: #3f684e;
+        --app-secondary-color: black;
         display: block;
+      }
+      
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+      
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+      
+      .drawer-list {
+        margin: 0 20px;
+      }
+      
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+      
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
       }
     </style>
 
-    <firebase-app
-      auth-domain="spoonstracker.firebaseapp.com"
-      database-url="https://spoonstracker.firebaseio.com/"
-      api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
+    <firebase-app auth-domain="spoonstracker.firebaseapp.com" database-url="https://spoonstracker.firebaseio.com/" api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
     </firebase-app>
     <firebase-auth id="auth" user="{{user}}" provider="facebook" on-error="handleError">
     </firebase-auth>
 
-    <template is="dom-if" if="{{!user}}">
-      <h2>Hello... please sign in!</h2>
-      <paper-button on-tap="signIn" raised>Sign In</paper-button>
-    </template>
+    <app-location route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-    <template is="dom-if" if="{{user}}">
-      <h2>Hello [[user.displayName]]</h2>
-      <paper-button on-tap="signOut" raised>Sign Out</paper-button>
-    </template>
+    <app-drawer-layout fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="home" href="/home">Home</a>
+          <a name="leaderboard" href="/leaderboard">Leaderboard</a>
+          <a name="pub-list" href="/pub-list">Find a 'spoons</a>
+          <template is="dom-if" if="{{user}}">
+            <a name="tracker" href="/tracker">Track my visits</a>
+          </template>
+        </iron-selector>
+      </app-drawer>
 
-    <firebase-query
-      id="query"
-      app-name="spoonstracker"
-      path="/pubs"
-      data="{{data}}" >
-    </firebase-query>
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
 
-    <template is="dom-repeat" items="{{data}}" as="pub">
-      <b> pub: [[pub.name]] </b>
-    </template>
-    
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title>'Spoons Tracker</div>
+            <template is="dom-if" if="[[user]]">Hi [[user.displayName]]!</template>
+            <paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+
+        <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
+          <spoons-tracker-home name="home"></spoons-tracker-home>
+          <spoons-tracker-leaderboard name="leaderboard"></spoons-tracker-leaderboard>
+          <spoons-tracker-pub-list name="pub-list"></spoons-tracker-pub-list>
+          <spoons-tracker-tracker name="tracker"></spoons-tracker-tracker>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+
   </template>
 
   <script>
@@ -51,22 +110,67 @@
       is: 'spoons-tracker-app',
 
       properties: {
-        prop1: {
+        data: {
+          type: Object,
+          observer: 'dataChanged'
+        },
+
+        page: {
           type: String,
-          value: 'spoons-tracker-app',
+          reflectToAttribute: true,
+          observer: '_pageChanged',
         },
       },
 
-      signIn: function(e) {
+      observers: [
+        '_routePageChanged(routeData.page)',
+      ],
+
+      _routePageChanged: function (page) {
+        this.page = page || 'home';
+
+        if (!this.$.drawer.persistent) {
+          this.$.drawer.close();
+        }
+      },
+
+      _pageChanged: function (page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl('../spoons-tracker-' + page + '/spoons-tracker-' + page + '.html');
+        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      },
+
+      _showPage404: function () {
+        this.page = 'view404';
+      },
+
+      toggleSignIn: function () {
+        if (this.user) {
+          this.signOut();
+        } else {
+          this.signIn();
+        }
+      },
+
+      signIn: function (e) {
         this.$.auth.signInWithPopup();
       },
 
-      signOut: function(e) {
+      signOut: function (e) {
         this.$.auth.signOut();
       },
 
-      handleError: function(e) {
+      handleError: function (e) {
         console.log("Auth error", e);
+      },
+
+      dataChanged: function (newData, oldData) {
+        console.log(newData, oldData);
+      },
+
+      addPub: function () {
+        this.data2 = { test: "hello" }
+        this.$.document.saveValue("/test");
       }
 
     });
