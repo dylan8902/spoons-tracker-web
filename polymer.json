@@ -1,0 +1,25 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/spoons-tracker-app/spoons-tracker-app.html",
+  "fragments": [
+    "src/spoons-tracker-home/spoons-tracker-home.html",
+    "src/spoons-tracker-leaderboard/spoons-tracker-leaderboard.html",
+    "src/spoons-tracker-pub-list/spoons-tracker-pub-list.html",
+    "src/spoons-tracker-tracker/spoons-tracker-tracker.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "data/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "bower_components/webcomponentsjs/webcomponents-lite.js"
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2-hybrid"
+    ]
+  }
+}
