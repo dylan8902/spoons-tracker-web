@@ -1,4 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
 
 <dom-module id="spoons-tracker-app">
   <template>
@@ -7,7 +12,18 @@
         display: block;
       }
     </style>
-    <h2>Hello [[prop1]]</h2>
+
+    <firebase-app
+      auth-domain="spoonstracker.firebaseapp.com"
+      database-url="https://spoonstracker.firebaseio.com/"
+      api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
+    </firebase-app>
+    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+    </firebase-auth>
+
+    <h2>Hello [[user.displayName]]</h2>
+    <paper-button on-tap="signIn">Sign In</paper-button>
+    
   </template>
 
   <script>
@@ -21,6 +37,14 @@
           value: 'spoons-tracker-app',
         },
       },
+
+      signIn: function(e) {
+        this.$.auth.signInWithPopup();
+      },
+
+      handleError: function(e) {
+        console.log("Auth error", e);
+      }
 
     });
   </script>
