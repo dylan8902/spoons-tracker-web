@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
@@ -18,11 +19,29 @@
       database-url="https://spoonstracker.firebaseio.com/"
       api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
     </firebase-app>
-    <firebase-auth id="auth" user="{{user}}" provider="google" on-error="handleError">
+    <firebase-auth id="auth" user="{{user}}" provider="facebook" on-error="handleError">
     </firebase-auth>
 
-    <h2>Hello [[user.displayName]]</h2>
-    <paper-button on-tap="signIn">Sign In</paper-button>
+    <template is="dom-if" if="{{!user}}">
+      <h2>Hello... please sign in!</h2>
+      <paper-button on-tap="signIn" raised>Sign In</paper-button>
+    </template>
+
+    <template is="dom-if" if="{{user}}">
+      <h2>Hello [[user.displayName]]</h2>
+      <paper-button on-tap="signOut" raised>Sign Out</paper-button>
+    </template>
+
+    <firebase-query
+      id="query"
+      app-name="spoonstracker"
+      path="/pubs"
+      data="{{data}}" >
+    </firebase-query>
+
+    <template is="dom-repeat" items="{{data}}" as="pub">
+      <b> pub: [[pub.name]] </b>
+    </template>
     
   </template>
 
@@ -40,6 +59,10 @@
 
       signIn: function(e) {
         this.$.auth.signInWithPopup();
+      },
+
+      signOut: function(e) {
+        this.$.auth.signOut();
       },
 
       handleError: function(e) {
