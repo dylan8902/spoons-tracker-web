@@ -3,8 +3,8 @@
   "shell": "src/spoons-tracker-app/spoons-tracker-app.html",
   "fragments": [
     "src/spoons-tracker-home/spoons-tracker-home.html",
-    "src/spoons-tracker-leaderboard/spoons-tracker-leaderboard.html",
-    "src/spoons-tracker-pub-list/spoons-tracker-pub-list.html",
+    "src/spoons-tracker-users/spoons-tracker-users.html",
+    "src/spoons-tracker-pubs/spoons-tracker-pubs.html",
     "src/spoons-tracker-tracker/spoons-tracker-tracker.html"
   ],
   "sources": [
