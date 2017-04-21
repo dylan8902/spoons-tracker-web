@@ -1,74 +1,53 @@
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="pub-list-item.html">
+
 <dom-module id="spoons-tracker-pubs">
   <template>
     <style>
        :host {
         display: block;
       }
-      .pub {
-        background-color: lightgray;
-        margin: 5px;
-        display: inline-block;
-        paddint-top: 5px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        padding-left: 10px;
-        padding-right: 10px;
-        cursor: pointer;
-      }
     </style>
 
-    <firebase-query id="query" path="/pubs" data="{{data}}">
-    </firebase-query>
+    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
-    <div style="padding:16px">
-      <p>Maybe a map here?</p>
-
-      <template is="dom-repeat" items="{{data}}" as="pub">
-        <div class="pub" on-click="_savePub">[[decodePubName(pub.name)]]</div><br/>
-      </template>
-
-      <firebase-document
-        id="uidNode"
-        path="/visits/pub-uid/uid"
-        data={{uid}}>
-      </firebase-document>
-      <firebase-document
-        id="pubNode"
-        path="/visits/pub-uid/pub"
-        data="{{pub}}">
-      </firebase-document>
-
+    <div style="margin-left: 16px; margin-right: 16px;">
+      <paper-input label="Search for a pub..." value="{{searchString}}"></paper-input>
     </div>
+
+    <template is="dom-repeat" items="{{pubs}}" as="pub" filter="{{computeFilter(searchString)}}">
+      <pub-list-item pub="[[pub]]"></pub-list-item>
+    </template>
+
   </template>
   <script>
     Polymer({
       is: 'spoons-tracker-pubs',
 
       properties: {
-        uid: String,
-        pub: String
+        searchQuery: {
+          type: String,
+          value: null
+        }
       },
 
-      decodePubName: function (pubName) {
-        return decodeURI(pubName.replace(/\+/g, " "));
-      },
-
-      _savePub: function (pubName) {
-        var encodedPubName = pubName.target.innerHTML.replace(new RegExp(" ", 'g'), "+");
-        console.log(encodedPubName);
-
-        var path = '/visits/' + encodedPubName + '-' + this.domHost.user.uid;
-
-        var uidNode = document.getElementById("uidNode");
-        uidNode.path = path + '/uid';
-        var pubNode = document.getElementById("pubNode");
-        pubNode.path = path + '/pub';
-
-        this.uid = this.domHost.user.uid;
-        this.pub = encodedPubName;
+      computeFilter: function (string) {
+        if (!string) {
+          // set filter to null to disable filtering
+          return null;
+        } else {
+          // return a filter function for the current search string
+          string = string.toLowerCase();
+          return function (pub) {
+            var pubName = pub.name.toLowerCase() + pub.address.toLowerCase();
+            return (pubName.indexOf(string) != -1);
+          };
+        }
       }
-
     });
-
   </script>
 </dom-module>

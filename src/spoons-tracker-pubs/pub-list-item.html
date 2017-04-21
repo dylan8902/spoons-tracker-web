@@ -1,0 +1,104 @@
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+
+<dom-module id="pub-list-item">
+  <template>
+    <style>
+       :host {
+        display: block;
+        --pub-status-colour: 'green';
+      }
+      
+      paper-item {
+        color: var(--pub-status-colour);
+      }
+    </style>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+
+    <firebase-document id="visitsDocument" path="/visits/[[visitKey]]" data={{visit}}></firebase-document>
+
+    <paper-item>
+      <paper-item-body two-line>
+        <div>[[_decode(pub.name)]]</div>
+        <div secondary>[[_decode(pub.address)]]</div>
+      </paper-item-body>
+      <paper-icon-button id="visited-button" icon="check-circle" on-tap="_toggleVisited"></paper-icon-button>
+      <paper-tooltip for="visited-button">
+        I've been here!
+      </paper-tooltip>
+    </paper-item>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'pub-list-item',
+
+      properties: {
+        visitKey: {
+          type: String,
+          computed: '_computeVisitKey(pub, user)'
+        },
+
+        pub: {
+          type: Object,
+          observer: '_onPubChanged'
+        },
+
+        user: {
+          type: Object,
+          observer: '_onUserChanged'
+        },
+
+        visit: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      },
+
+      observers: ['_onVisitChanged(visit.visited)'],
+
+      _decode: function (text) {
+        return decodeURIComponent(text).replace(/\+/g, ' ');
+      },
+
+      _toggleVisited: function () {
+        this.set('visit.visited', this.visit ? !this.visit.visited : true);
+      },
+
+      _computeVisitKey: function (pub, user) {
+        if (pub && pub.name && user && user.uid) {
+          return pub.name + user.uid;
+        }
+      },
+
+      _onPubChanged: function (pub) {
+        if (pub && pub.name) {
+          this.set('visit.pub', pub.name);
+        }
+      },
+
+      _onUserChanged: function (user) {
+        if (user && user.uid) {
+          this.set('visit.uid', user.uid);
+        }
+      },
+
+      _onVisitChanged: function (visited) {
+        if (visited) {
+          this.customStyle['--pub-status-colour'] = 'green';
+        } else {
+          this.customStyle['--pub-status-colour'] = 'black';
+        }
+
+        this.updateStyles();
+      }
+    });
+  </script>
+</dom-module>

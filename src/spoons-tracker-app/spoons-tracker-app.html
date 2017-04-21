@@ -18,11 +18,6 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
-<link rel="import" href="../spoons-tracker-home/spoons-tracker-home.html">
-<link rel="import" href="../spoons-tracker-users/spoons-tracker-users.html">
-<link rel="import" href="../spoons-tracker-pubs/spoons-tracker-pubs.html">
-<link rel="import" href="../spoons-tracker-tracker/spoons-tracker-tracker.html">
-
 <dom-module id="spoons-tracker-app">
   <template>
     <style>
@@ -31,20 +26,20 @@
         --app-secondary-color: black;
         display: block;
       }
-
+      
       app-header {
         color: #fff;
         background-color: var(--app-primary-color);
       }
-
+      
       app-header paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
-
+      
       .drawer-list {
         margin: 0 20px;
       }
-
+      
       .drawer-list a {
         display: block;
         padding: 0 16px;
@@ -52,7 +47,7 @@
         color: var(--app-secondary-color);
         line-height: 40px;
       }
-
+      
       .drawer-list a.iron-selected {
         color: black;
         font-weight: bold;
@@ -83,7 +78,6 @@
 
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
-
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
@@ -166,13 +160,7 @@
 
       dataChanged: function (newData, oldData) {
         console.log(newData, oldData);
-      },
-
-      addPub: function () {
-        this.data2 = { test: "hello" }
-        this.$.document.saveValue("/test");
-      },
-
+      }
     });
   </script>
 </dom-module>

@@ -16,7 +16,10 @@
     "iron-localstorage": "PolymerElements/iron-localstorage#^1.0.0",
     "iron-media-query": "PolymerElements/iron-media-query#^1.0.0",
     "iron-icons": "^1.2.0",
-    "firebase": "^3.8.0"
+    "firebase": "^3.8.0",
+    "paper-item": "^1.2.2",
+    "paper-tooltip": "^1.1.4",
+    "paper-input": "^1.1.24"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
