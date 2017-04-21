@@ -5,10 +5,11 @@
         display: block;
       }
     </style>
-    <div style="margin: 16px">
-      <firebase-auth id="auth" user="{{user}}" provider="facebook" on-error="handleError">
-      </firebase-auth>
 
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+
+    <div style="margin: 16px">
+      <h2>Home</h2>
       <p>Hello [[user.displayName]]! You've visited 16 pubs and are 5th on the leaderboard.</p>
     </div>
   </template>
