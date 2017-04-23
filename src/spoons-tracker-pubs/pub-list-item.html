@@ -16,9 +16,7 @@
       }
     </style>
 
-    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
-
-    <firebase-document id="visitsDocument" path="/visits/[[visitKey]]" data={{visit}}></firebase-document>
+    <firebase-document path="/visits/[[visitKey]]" data={{visit}}></firebase-document>
 
     <paper-item>
       <paper-item-body two-line>
@@ -69,18 +67,19 @@
       },
 
       _toggleVisited: function () {
+        console.log("visit", this.visit, "visitKey", this.visitKey)
         this.set('visit.visited', this.visit ? !this.visit.visited : true);
       },
 
       _computeVisitKey: function (pub, user) {
-        if (pub && pub.name && user && user.uid) {
-          return pub.name + user.uid;
+        if (pub && pub.$key && user && user.uid) {
+          return pub.$key + user.uid;
         }
       },
 
       _onPubChanged: function (pub) {
-        if (pub && pub.name) {
-          this.set('visit.pub', pub.name);
+        if (pub && pub.$key) {
+          this.set('visit.pub', pub.$key);
         }
       },
 
@@ -93,8 +92,18 @@
       _onVisitChanged: function (visited) {
         if (visited) {
           this.customStyle['--pub-status-colour'] = 'green';
+
+          if (this.pub && this.user) {
+            this.set('visit.uid', this.user.uid);
+            this.set('visit.pub', this.pub.$key);
+            this.set('userVisitedPubs.' + this.pub.$key, true);
+          }
         } else {
           this.customStyle['--pub-status-colour'] = 'black';
+
+          if (this.pub && this.visit && this.userVisitedPubs && this.userVisitedPubs[this.pub.$key]) {
+            this.set('userVisitedPubs.' + this.pub.$key, null);
+          }
         }
 
         this.updateStyles();

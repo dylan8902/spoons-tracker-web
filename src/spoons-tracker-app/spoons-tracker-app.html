@@ -18,7 +18,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
-<link rel="import" href="../spoons-tracker-pubs/spoons-tracker-pubs.html">
+<!--<link rel="import" href="../spoons-tracker-pubs/spoons-tracker-pubs.html">-->
 
 <dom-module id="spoons-tracker-app">
   <template>
@@ -58,8 +58,10 @@
 
     <firebase-app auth-domain="spoonstracker.firebaseapp.com" database-url="https://spoonstracker.firebaseio.com/" api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
     </firebase-app>
-    <firebase-auth id="auth" user="{{user}}" provider="facebook" on-error="handleError">
-    </firebase-auth>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook" on-error="handleError"> </firebase-auth>
+
+    <firebase-document path="/users/[[user.uid]]" data={{userDetails}}></firebase-document>
 
     <app-location route="{{route}}"></app-location>
     <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
@@ -106,16 +108,16 @@
       is: 'spoons-tracker-app',
 
       properties: {
-        data: {
-          type: Object,
-          observer: 'dataChanged'
-        },
-
         page: {
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged',
         },
+
+        user: {
+          type: Object,
+          observer: '_userChanged'
+        }
       },
 
       observers: [
@@ -160,8 +162,11 @@
         console.log("Auth error", e);
       },
 
-      dataChanged: function (newData, oldData) {
-        console.log(newData, oldData);
+      _userChanged: function (newUser, oldUser) {
+        if (this.user instanceof Object) {
+          this.set('userDetails.name', this.user.displayName);
+          this.set('userDetails.email', this.user.email);
+        }
       }
     });
   </script>

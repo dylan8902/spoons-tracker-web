@@ -13,7 +13,8 @@
       }
     </style>
 
-
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-query path="/users/[[user.uid]]/visited" data={{userVisitedPubs}}></firebase-query>
     <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
     <div style="margin: 16px">
@@ -21,12 +22,13 @@
     </div>
 
     <template is="dom-repeat" items="{{pubs}}" as="pub" filter="{{computeFilter(searchString)}}">
-      <pub-list-item pub="[[pub]]"></pub-list-item>
+      <pub-list-item pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
     </template>
 
   </template>
   <script>
     Polymer({
+
       is: 'spoons-tracker-pubs',
 
       properties: {
