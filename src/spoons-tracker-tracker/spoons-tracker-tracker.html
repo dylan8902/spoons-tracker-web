@@ -1,3 +1,6 @@
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
 <dom-module id="spoons-tracker-tracker">
   <template>
     <style>
@@ -5,13 +8,34 @@
         display: block;
       }
     </style>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-query id="query" path="/visits" data="{{visits}}" equalTo="{{uid":"[[user.uid]]}}"></firebase-query>
+
     <div style="padding:16px">
-      <p>Hey there! You've visited 1234 wetherspoons, well done you.</p>
+      <p>You've visited <span id="countDisplay">?</span> wetherspoons, please find a list below: </p>
     </div>
+
+    <template is="dom-repeat" items="{{visits}}" as="visit" filter="visited">
+      <div style="padding-left:16px" hidden$="[[saveIndex(index)]]">[[_decode(visit.pub)]]</div>
+    </template>
+
   </template>
   <script>
     Polymer({
-      is: 'spoons-tracker-tracker'
+      is: 'spoons-tracker-tracker',
+      
+      saveIndex: function(index){;
+        document.getElementById('countDisplay').innerHTML = index+1;
+      },
+
+      _decode: function (text) {
+        return decodeURIComponent(text).replace(/\+/g, ' ');
+      },
+
+      visited: function(visit) {
+        return visit.visited;
+      }
     });
   </script>
 </dom-module>
