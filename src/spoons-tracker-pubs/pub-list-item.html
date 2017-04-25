@@ -20,7 +20,7 @@
       }
     </style>
 
-    <firebase-document path="/visits/[[visitKey]]" data={{visit}}></firebase-document>
+    <firebase-document path="/visits/[[visitKey]]" data="{{visit}}"></firebase-document>
 
     <paper-item>
       <paper-item-body two-line>
@@ -107,7 +107,7 @@
             this.set('visit.pub', this.pub.$key);
             this.set('userVisitedPubs.' + this.pub.$key, true);
           }
-        } else {
+        } else if (visited !== undefined) {
           this.customStyle['--pub-status-colour'] = 'black';
 
           if (this.pub && this.visit && this.userVisitedPubs && this.userVisitedPubs[this.pub.$key]) {
