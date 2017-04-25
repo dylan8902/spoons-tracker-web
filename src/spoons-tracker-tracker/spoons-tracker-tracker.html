@@ -1,4 +1,6 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
 <dom-module id="spoons-tracker-tracker">
@@ -9,32 +11,32 @@
       }
     </style>
 
-    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
-    <firebase-query id="query" path="/visits" data="{{visits}}" equalTo="{{uid":"[[user.uid]]}}"></firebase-query>
+    <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}" query="shallow=true"></firebase-query>
 
     <div style="padding:16px">
-      <p>You've visited <span id="countDisplay">?</span> wetherspoons, please find a list below: </p>
+      <p>You've visited [[visits.length]] wetherspoons, please find a list below:</p>
+      <ul>
+        <template is="dom-repeat" items="{{visits}}" as="visit">
+          <li>[[_decode(visit.$key)]]</li>
+        </template>
+      </ul>
     </div>
-
-    <template is="dom-repeat" items="{{visits}}" as="visit" filter="visited">
-      <div style="padding-left:16px" hidden$="[[saveIndex(index)]]">[[_decode(visit.pub)]]</div>
-    </template>
 
   </template>
   <script>
     Polymer({
       is: 'spoons-tracker-tracker',
-      
-      saveIndex: function(index){;
-        document.getElementById('countDisplay').innerHTML = index+1;
+
+      properties: {
+        visits: {
+          type: Array,
+          value: []
+        }
       },
 
       _decode: function (text) {
         return decodeURIComponent(text).replace(/\+/g, ' ');
-      },
-
-      visited: function(visit) {
-        return visit.visited;
       }
     });
   </script>
