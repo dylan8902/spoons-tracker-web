@@ -1,7 +1,10 @@
-<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
 <link rel="import" href="pub-list-item.html">
 
@@ -14,8 +17,10 @@
     </style>
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
-    <firebase-query path="/users/[[user.uid]]/visited" data={{userVisitedPubs}}></firebase-query>
-    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
+
+    <firebase-query path="/users/[[user.uid]]/visited" data="{{userVisitedPubs}}"></firebase-query>
+    <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
+    <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
     <div style="margin: 16px">
       <paper-input label="Search for a pub..." value="{{searchString}}"></paper-input>
