@@ -23,10 +23,10 @@
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
     <div style="margin: 16px">
-      <paper-input label="Search for a pub..." value="{{searchString}}"></paper-input>
+      <paper-input label="Search for a pub..." value="{{searchQuery}}"></paper-input>
     </div>
 
-    <template is="dom-repeat" items="{{pubs}}" as="pub" filter="{{computeFilter(searchString)}}">
+    <template is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
       <pub-list-item pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
     </template>
 
@@ -39,11 +39,23 @@
       properties: {
         searchQuery: {
           type: String,
-          value: null
+          observer: '_searchQueryChanged'
+        },
+
+        searchString: {
+          type: String
         }
       },
 
-      computeFilter: function (string) {
+      _searchQueryChanged: function () {
+        this.debounce('setSearchString', this._setSearchString, 200);
+      },
+
+      _setSearchString: function () {
+        this.set('searchString', this.searchQuery);
+      },
+
+      _computeFilter: function (string) {
         if (!string) {
           // set filter to null to disable filtering
           return null;
