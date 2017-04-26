@@ -14,7 +14,7 @@
         display: block;
         --pub-status-colour: 'green';
       }
-      
+
       paper-item {
         color: var(--pub-status-colour);
       }
@@ -76,7 +76,7 @@
       },
 
       _toggleVisited: function () {
-        console.log("visit", this.visit, "visitKey", this.visitKey)
+        //console.log("visit", this.visit, "visitKey", this.visitKey)
         this.set('visit.visited', this.visit ? !this.visit.visited : true);
       },
 
