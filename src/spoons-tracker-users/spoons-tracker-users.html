@@ -1,5 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
 <dom-module id="spoons-tracker-users">
   <template>
     <style>
@@ -7,18 +10,34 @@
         display: block;
       }
     </style>
+
+    <firebase-query path="/users" data="{{users}}"></firebase-query>
+
     <div style="margin: 16px">
-      <h2>Leaderboard</h2>
-      The leaderboard today looks like so:
-      <ol>
-        <li>Mark Whelton</li>
-        <li>Mat Kastner</li>
-      </ol>
+      <h2>Users</h2>
+
+      <template is="dom-repeat" items="{{users}}" as="user" sort="_sortUsers">
+        <paper-item-body one-line>
+          <div>[[user.name]] <span style="margin-left: 20px"></span>[[_count(user)]]</div>
+        </paper-item-body>
+      </template>
+
     </div>
   </template>
   <script>
     Polymer({
-      is: 'spoons-tracker-users'
+      is: 'spoons-tracker-users',
+
+      _count: function(user) {
+        return (Object.keys(user.visited).map(function(k) {return user.visited[k]})).length;
+      },
+
+    _sortUsers: function(a, b) {
+      var a_count = (Object.keys(a.visited).map(function(k) {return a.visited[k]})).length;
+      var b_count = (Object.keys(b.visited).map(function(k) {return b.visited[k]})).length;
+      if(a_count === b_count) return 0;
+      return a_count > b_count ? -1 : 1;
+    }
     });
   </script>
 </dom-module>
