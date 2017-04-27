@@ -20,3 +20,7 @@ script:
 - polymer lint
 - xvfb-run polymer test
 - polymer build
+deploy:
+  provider: firebase
+  on:
+    branch: develop
