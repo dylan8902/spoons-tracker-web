@@ -14,6 +14,8 @@ before_install:
 - npm install -g bower polymer-cli
 install:
 - polymer install --variants
+before_script:
+- npm install web-component-tester
 script:
 - polymer lint
 - xvfb-run polymer test
