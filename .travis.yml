@@ -1,5 +1,6 @@
 language: node_js
 node_js: stable
+os: linux
 dist: trusty
 sudo: required
 addons:
@@ -12,9 +13,7 @@ addons:
 before_install:
 - npm install -g bower polymer-cli
 install:
-- bower install
-before_script:
-- npm install web-component-tester
+- polymer install --variants
 script:
 - polymer lint
 - xvfb-run polymer test
