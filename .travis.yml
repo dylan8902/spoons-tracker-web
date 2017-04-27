@@ -1,0 +1,21 @@
+language: node_js
+node_js: stable
+dist: trusty
+sudo: required
+addons:
+  firefox: latest
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+before_install:
+- npm install -g bower polymer-cli
+install:
+- bower install
+before_script:
+- npm install web-component-tester
+script:
+- polymer lint
+- polymer test
+- polymer build

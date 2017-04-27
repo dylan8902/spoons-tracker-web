@@ -22,6 +22,7 @@
     <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
+   <div style="max-width: 600px;">
     <div style="margin: 16px">
       <paper-input label="Search for a pub..." value="{{searchQuery}}"></paper-input>
     </div>
@@ -29,6 +30,7 @@
     <template is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
       <pub-list-item pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
     </template>
+  </div>
 
   </template>
   <script>
