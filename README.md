@@ -1,4 +1,4 @@
-develop: [![Build Status](https://travis-ci.org/CardiffBros/spoons-tracker-web.svg?branch=develop)](https://travis-ci.org/CardiffBros/spoons-tracker-web) develop: [![Build Status](https://travis-ci.org/CardiffBros/spoons-tracker-web.svg?branch=master)](https://travis-ci.org/CardiffBros/spoons-tracker-web)
+[![Build Status](https://travis-ci.org/CardiffBros/spoons-tracker-web.svg?branch=develop)](https://travis-ci.org/CardiffBros/spoons-tracker-web) [![Build Status](https://travis-ci.org/CardiffBros/spoons-tracker-web.svg?branch=master)](https://travis-ci.org/CardiffBros/spoons-tracker-web)
 
 # \<spoons-tracker\>
 
