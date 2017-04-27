@@ -21,6 +21,7 @@ script:
 - xvfb-run polymer test
 - polymer build
 deploy:
+  skip_cleanup: true
   provider: firebase
   on:
     branch: develop
