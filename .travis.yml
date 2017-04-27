@@ -17,5 +17,5 @@ before_script:
 - npm install web-component-tester
 script:
 - polymer lint
-- polymer test
+- xvfb-run polymer test
 - polymer build
