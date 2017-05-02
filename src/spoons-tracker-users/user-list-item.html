@@ -48,6 +48,16 @@
   Polymer({
     is: 'user-list-item',
 
+    properties: {
+      user: {
+        type: Object
+      },
+
+      index: {
+        type: Number
+      }
+    },
+
     _count: function(visited) {
       if(visited == null) {
           return 0;

@@ -12,7 +12,7 @@
     </style>
 
     <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
-    <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}" query="shallow=true"></firebase-query>
+    <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}"></firebase-query>
 
     <div style="padding:16px">
       <p>You've visited [[visits.length]] wetherspoons, please find a list below:</p>
