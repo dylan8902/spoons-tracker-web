@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
@@ -23,12 +24,17 @@
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
    <div style="max-width: 600px;">
-    <div style="margin: 16px">
+
+    <div id="search" style="display: none; margin: 16px">
       <paper-input label="Search for a pub..." value="{{searchQuery}}"></paper-input>
     </div>
 
-    <template is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
-      <pub-list-item pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
+    <div id="spinner" style="margin: 32px">
+      Loading, please wait... <paper-spinner active></paper-spinner>
+    </div>
+
+    <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
+      <pub-list-item id="{{_checkIndex(index)}}" pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
     </template>
   </div>
 
@@ -46,7 +52,15 @@
 
         searchString: {
           type: String
-        }
+        },
+
+        pub: {
+          type: Object
+        },
+
+        index: {
+          type: Number
+        },
       },
 
       _searchQueryChanged: function () {
@@ -69,7 +83,16 @@
             return (pubName.indexOf(string) != -1);
           };
         }
+      },
+
+      _checkIndex: function(index) {
+        if(index === 907) {
+          this.$.spinner.style.display = "none";
+          this.$.search.style.display = "block";
+        }
+        return index;
       }
     });
+
   </script>
 </dom-module>

@@ -36,15 +36,16 @@
     },
 
     _sortUsers: function(a, b) {
-      try {
-        var a_count = Object.keys(a.visited).length;
-        var b_count = Object.keys(b.visited).length;
-        if(a_count === b_count) return 0;
-        return a_count > b_count ? -1 : 1;
+      var a_count = 0;
+      if(a.hasOwnProperty("visited")) {
+        a_count = Object.keys(a.visited).length;
       }
-      catch(err) {
-          return -1;
+      var b_count = 0;
+      if (b.hasOwnProperty("visited")) {
+        b_count = Object.keys(b.visited).length;;
       }
+      if(a_count === b_count) return 0;
+      return a_count > b_count ? -1 : 1;
     }
     });
   </script>
