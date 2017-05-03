@@ -20,7 +20,7 @@
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
 
     <firebase-query path="/users/[[user.uid]]/visited" data="{{userVisitedPubs}}"></firebase-query>
-    <firebase-query id="query" path="/locations" data="{{livePubs}}"></firebase-query>
+    <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
    <div style="max-width: 600px;">
