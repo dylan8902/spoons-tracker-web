@@ -39,7 +39,8 @@
 
       properties: {
         pub: {
-          type: Object
+          type: Object,
+          observer: '_setVisited'
         },
 
         visited: {
@@ -54,17 +55,19 @@
         }
       },
 
-      observers: ["_onVisitedPubsChanged(visitedPubs.splices)"],
+      observers: ["_setVisited(visitedPubs.splices)"],
 
       _toggleVisited: function () {
         this.set('visited', !this.visited);
       },
 
-      _onVisitedPubsChanged: function (visitedPubs) {
-        if (this.visitedPubs.find(pub => pub.$key === this.pub.$key)) {
-          this.set('visited', true);
-        } else if (this.visited) {
-          this.set('visited', false);
+      _setVisited: function (visitedPubs) {
+        if (this.visitedPubs instanceof Array && this.pub instanceof Object) {
+          if (this.visitedPubs.find(pub => pub.$key === this.pub.$key)) {
+            this.set('visited', true);
+          } else {
+            this.set('visited', false);
+          }
         }
       },
 
@@ -74,7 +77,7 @@
             console.log("User visited", this.pub.$key);
             this.set('visitedPubs.' + this.pub.$key, true);
           }
-          
+
           this.customStyle['--pub-status-colour'] = 'green';
           this.updateStyles();
         } else {

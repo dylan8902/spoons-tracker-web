@@ -36,7 +36,7 @@
       </paper-input>
 
       <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
-        <pub-list-item pub="[[pub]]" user="[[user]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
+        <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
       </template>
     </div>
 
