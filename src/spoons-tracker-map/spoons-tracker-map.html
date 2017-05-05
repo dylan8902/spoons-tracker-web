@@ -1,0 +1,36 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+
+<dom-module id="spoons-tracker-map">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+      
+      google-map {
+        height: 600px;
+      }
+    </style>
+
+    <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
+    <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
+
+    <google-map fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
+      dragEvents>
+      <template is="dom-repeat" items="[[pubs]]" as="pub" initialCount="20">
+        <google-map-marker title="[[pub.name]]" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.address]]</google-map-marker>
+      </template>
+    </google-map>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'spoons-tracker-map'
+    });
+  </script>
+</dom-module>
