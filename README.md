@@ -1,4 +1,4 @@
-# \<spoons-tracker\>
+# 'Spoons Tracker [![Build Status](https://travis-ci.org/CardiffBros/spoons-tracker-web.svg?branch=develop)](https://travis-ci.org/CardiffBros/spoons-tracker-web)
 
 An app to track the Wetherspoons visits of Wetherspoons fans!
 

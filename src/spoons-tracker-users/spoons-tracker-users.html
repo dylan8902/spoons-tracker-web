@@ -1,7 +1,10 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="user-list-item.html">
 
 <dom-module id="spoons-tracker-users">
   <template>
@@ -16,11 +19,11 @@
     <div style="margin: 16px">
       <h2>Users</h2>
 
-      <template is="dom-repeat" items="{{users}}" as="user" sort="_sortUsers">
-        <paper-item-body one-line>
-          <div>[[user.name]] <span style="margin-left: 20px"></span>[[_count(user)]]</div>
-        </paper-item-body>
-      </template>
+      <div style="max-width: 400px;">
+        <template is="dom-repeat" items="{{users}}" as="user" sort="_sortUsers">
+          <user-list-item user="[[user]]" index="[[_userPosition(index)]]"></pub-list-item>
+        </template>
+      </div>
 
     </div>
   </template>
@@ -28,13 +31,19 @@
     Polymer({
       is: 'spoons-tracker-users',
 
-      _count: function(user) {
-        return (Object.keys(user.visited).map(function(k) {return user.visited[k]})).length;
-      },
+    _userPosition: function(index) {
+      return index+1;
+    },
 
     _sortUsers: function(a, b) {
-      var a_count = (Object.keys(a.visited).map(function(k) {return a.visited[k]})).length;
-      var b_count = (Object.keys(b.visited).map(function(k) {return b.visited[k]})).length;
+      var a_count = 0;
+      if(a.hasOwnProperty("visited")) {
+        a_count = Object.keys(a.visited).length;
+      }
+      var b_count = 0;
+      if (b.hasOwnProperty("visited")) {
+        b_count = Object.keys(b.visited).length;;
+      }
       if(a_count === b_count) return 0;
       return a_count > b_count ? -1 : 1;
     }

@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
@@ -14,12 +15,13 @@
         display: block;
         --pub-status-colour: 'green';
       }
-      
+
       paper-item {
         color: var(--pub-status-colour);
       }
     </style>
 
+    <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
     <firebase-document path="/visits/[[visitKey]]" data="{{visit}}"></firebase-document>
 
     <paper-item>
@@ -76,8 +78,9 @@
       },
 
       _toggleVisited: function () {
-        console.log("visit", this.visit, "visitKey", this.visitKey)
-        this.set('visit.visited', this.visit ? !this.visit.visited : true);
+        if (this.user instanceof Object) {
+          this.set('visit.visited', this.visit ? !this.visit.visited : true);
+        }
       },
 
       _computeVisitKey: function (pub, user) {
