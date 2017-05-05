@@ -17,7 +17,7 @@
        :host {
         display: block;
       }
-      
+
       paper-input {
         padding-left: 16px;
         padding-right: 16px;
@@ -35,7 +35,7 @@
         <paper-icon-button icon="close" on-tap="_clearSearch" suffix></paper-icon-button>
       </paper-input>
 
-      <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
+      <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs" initialCount="20" filter="{{_computeFilter(searchString)}}">
         <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
       </template>
     </div>
@@ -98,6 +98,11 @@
             return (pubName.indexOf(string) != -1);
           };
         }
+      },
+
+      _sortPubs: function(a, b) {
+        if(a.name === b.name) return 0;
+        return a.name < b.name ? -1 : 1;
       }
     });
   </script>
