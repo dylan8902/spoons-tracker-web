@@ -20,7 +20,7 @@
       <h2>Users</h2>
 
       <div style="max-width: 400px;">
-        <template is="dom-repeat" items="{{users}}" as="user" sort="_sortUsers">
+        <template is="dom-repeat" items="{{users}}" as="user" sort="_sortUsers" observe="visited">
           <user-list-item user="[[user]]" index="[[_userPosition(index)]]"></pub-list-item>
         </template>
       </div>
