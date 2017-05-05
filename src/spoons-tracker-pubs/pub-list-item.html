@@ -21,104 +21,74 @@
       }
     </style>
 
-    <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
-    <firebase-document path="/visits/[[visitKey]]" data="{{visit}}"></firebase-document>
-
     <paper-item>
       <paper-item-body two-line>
-        <div>[[_decode(pub.name)]]</div>
-        <div secondary>[[_decode(pub.address)]]</div>
+        <div>[[pub.name]]</div>
+        <div secondary>[[pub.address]]</div>
       </paper-item-body>
       <paper-icon-button id="visited-button" icon="check-circle" on-tap="_toggleVisited"></paper-icon-button>
       <paper-tooltip for="visited-button">
-        I've visited!
+        I've visited this pub!
       </paper-tooltip>
     </paper-item>
 
   </template>
-
   <script>
     Polymer({
-
       is: 'pub-list-item',
 
       properties: {
-        visitKey: {
-          type: String,
-          computed: '_computeVisitKey(pub, user)'
-        },
-
         pub: {
           type: Object,
-          observer: '_onPubChanged'
+          observer: '_setVisited'
         },
 
-        user: {
-          type: Object,
-          observer: '_onUserChanged'
+        visited: {
+          type: Boolean,
+          value: false,
+          observer: '_onVisitedChanged'
         },
 
-        visit: {
-          type: Object,
-          value: function () {
-            return {};
-          }
-        },
-
-        userVisitedPubs: {
+        visitedPubs: {
           type: Array,
-          value: []
+          notify: true
         }
       },
 
-      observers: ['_onVisitChanged(visit.visited)'],
-
-      _decode: function (text) {
-        return decodeURIComponent(text).replace(/\+/g, ' ');
-      },
+      observers: ["_setVisited(visitedPubs.splices)"],
 
       _toggleVisited: function () {
-        if (this.user instanceof Object) {
-          this.set('visit.visited', this.visit ? !this.visit.visited : true);
+        this.set('visited', !this.visited);
+      },
+
+      _setVisited: function (visitedPubs) {
+        if (this.visitedPubs instanceof Array && this.pub instanceof Object) {
+          if (this.visitedPubs.find(pub => pub.$key === this.pub.$key)) {
+            this.set('visited', true);
+          } else {
+            this.set('visited', false);
+          }
         }
       },
 
-      _computeVisitKey: function (pub, user) {
-        if (pub && pub.$key && user && user.uid) {
-          return pub.$key + user.uid;
-        }
-      },
-
-      _onPubChanged: function (pub) {
-        if (pub && pub.$key) {
-          this.set('visit.pub', pub.$key);
-        }
-      },
-
-      _onUserChanged: function (user) {
-        if (user && user.uid) {
-          this.set('visit.uid', user.uid);
-        }
-      },
-
-      _onVisitChanged: function (visited) {
+      _onVisitedChanged: function (visited) {
         if (visited) {
+          if (this.pub instanceof Object && this.pub.$key && !this.visitedPubs.find(pub => pub.$key === this.pub.$key)) {
+            console.log("User visited", this.pub.$key);
+            this.set('visitedPubs.' + this.pub.$key, true);
+          }
+
           this.customStyle['--pub-status-colour'] = 'green';
-
-          if (this.pub && this.user) {
-            this.set('visit.uid', this.user.uid);
-            this.set('visit.pub', this.pub.$key);
-            this.set('userVisitedPubs.' + this.pub.$key, true);
+          this.updateStyles();
+        } else {
+          if (this.pub instanceof Object && this.pub.$key && this.visitedPubs.find(pub => pub.$key === this.pub.$key)) {
+            console.log("User unvisited", this.pub.$key);
+            this.set('visitedPubs.' + this.pub.$key, null);
           }
-        } else if (visited !== undefined) {
+
           this.customStyle['--pub-status-colour'] = 'black';
-
-          if (this.pub && this.visit && this.userVisitedPubs && this.userVisitedPubs[this.pub.$key]) {
-            this.set('userVisitedPubs.' + this.pub.$key, null);
-          }
+          this.updateStyles();
         }
-
-        this.updateStyles();
       }
     });
   </script>
