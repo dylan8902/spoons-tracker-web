@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="spoons-tracker-map">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+       :host {
+        display: block;
+      }
+
+      google-map {
+        height: 100vh;
+      }
+    </style>
+
+    <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}"></firebase-query>
+
+    <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
+    <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
+
+    <google-map fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
+      dragEvents>
+      <template is="dom-repeat" items="[[pubs]]" as="pub" initialCount="20">
+        <google-map-marker title="[[pub.name]]" icon="[[_getMarkerUrl(pub.$key, visits.*)]]" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
+      </template>
+    </google-map>
+
+    [[visits]]
+
+  </template>
+  <script>
+    Polymer({
+      is: 'spoons-tracker-map',
+
+      properties: {
+        visits: {
+          type: Array
+        }
+      },
+
+      _getMarkerUrl: function(pubName, visits) {
+        if (visits.value && visits.value.find(visit => visit.$key.includes(pubName))) {
+          return "/images/visited-marker.png";
+        } else {
+          return "/images/new-marker.png";
+        }
+      }
+    });
+  </script>
+</dom-module>

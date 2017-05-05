@@ -5,6 +5,7 @@
     "src/spoons-tracker-home/spoons-tracker-home.html",
     "src/spoons-tracker-users/spoons-tracker-users.html",
     "src/spoons-tracker-pubs/spoons-tracker-pubs.html",
+    "src/spoons-tracker-map/spoons-tracker-map.html",
     "src/spoons-tracker-tracker/spoons-tracker-tracker.html"
   ],
   "sources": [
