@@ -13,16 +13,12 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-app.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
-
-<link rel="import" href="../spoons-tracker-home/spoons-tracker-home.html">
-<link rel="import" href="../spoons-tracker-pubs/spoons-tracker-pubs.html">
-<link rel="import" href="../spoons-tracker-users/spoons-tracker-users.html">
-<link rel="import" href="../spoons-tracker-tracker/spoons-tracker-tracker.html">
 
 <dom-module id="spoons-tracker-app">
   <template>
@@ -58,6 +54,11 @@
         color: black;
         font-weight: bold;
       }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-container-color: transparent;
+      }
     </style>
 
     <firebase-app auth-domain="spoonstracker.firebaseapp.com" database-url="https://spoonstracker.firebaseio.com/" api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
@@ -92,13 +93,14 @@
             <div main-title>'Spoons Tracker</div>
             <template is="dom-if" if="[[user]]">Hi [[user.displayName]]!</template>
             <paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button>
+            <paper-progress indeterminate="[[loading]]" bottom-item></paper-progress>
           </app-toolbar>
         </app-header>
 
         <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
           <spoons-tracker-home name="home"></spoons-tracker-home>
           <spoons-tracker-users name="users"></spoons-tracker-users>
-          <spoons-tracker-pubs name="pubs"></spoons-tracker-pubs>
+          <spoons-tracker-pubs name="pubs" loading="{{loading}}"></spoons-tracker-pubs>
           <spoons-tracker-tracker name="tracker"></spoons-tracker-tracker>
         </iron-pages>
       </app-header-layout>

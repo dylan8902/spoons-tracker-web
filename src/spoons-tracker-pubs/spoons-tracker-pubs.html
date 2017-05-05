@@ -3,9 +3,11 @@
 <link rel="import" href="../../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html"
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html" >
 
 <link rel="import" href="pub-list-item.html">
 
@@ -15,33 +17,32 @@
        :host {
         display: block;
       }
+      
+      paper-input {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
     </style>
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
 
     <firebase-query path="/users/[[user.uid]]/visited" data="{{userVisitedPubs}}"></firebase-query>
-    <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
-    <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
+    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
-   <div style="max-width: 750px;">
+    <div style="max-width: 750px;">
 
-    <div id="search" style="display: none; margin: 16px">
-      <paper-input label="Search for a pub..." value="{{searchQuery}}"></paper-input>
+      <paper-input label="Search for a pub..." value="{{searchQuery}}" disabled="[[loading]]">
+        <paper-icon-button icon="close" on-tap="_clearSearch" suffix></paper-icon-button>
+      </paper-input>
+
+      <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
+        <pub-list-item pub="[[pub]]" user="[[user]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
+      </template>
     </div>
-
-    <div id="spinner" style="margin: 32px">
-      Loading, please wait... <paper-spinner active></paper-spinner>
-    </div>
-
-    <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" initialCount="20" filter="{{_computeFilter(searchString)}}">
-      <pub-list-item id="{{_checkIndex(index)}}" pub="[[pub]]" user="[[user]]" user-visited-pubs="{{userVisitedPubs}}"></pub-list-item>
-    </template>
-  </div>
 
   </template>
   <script>
     Polymer({
-
       is: 'spoons-tracker-pubs',
 
       properties: {
@@ -61,6 +62,20 @@
         index: {
           type: Number
         },
+
+        loading: {
+          type: Boolean,
+          computed: '_isLoading(pubs.length)',
+          notify: true
+        }
+      },
+
+      _clearSearch: function() {
+        this.set('searchQuery', null);
+      },
+
+      _isLoading: function (pubCount) {
+        return pubCount <= 0;
       },
 
       _searchQueryChanged: function () {
@@ -83,16 +98,7 @@
             return (pubName.indexOf(string) != -1);
           };
         }
-      },
-
-      _checkIndex: function(index) {
-        if(index === 0) {
-          this.$.spinner.style.display = "none";
-          this.$.search.style.display = "block";
-        }
-        return index;
       }
     });
-
   </script>
 </dom-module>
