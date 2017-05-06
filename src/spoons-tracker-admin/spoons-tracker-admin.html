@@ -4,8 +4,7 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
-
-<link rel="import" href="pub-admin-details">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
 
 <dom-module id="spoons-tracker-admin">
   <template>
@@ -17,24 +16,57 @@
         padding-left: 16px;
         padding-right: 16px;
       }
+      .save-button {
+        float:right;
+      }
+      .form {
+        margin-top: 35px;
+        margin-bottom: 35px;
+      }
     </style>
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
 
-    <!--<firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>-->
+    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
     <div style="max-width: 750px;">
 
-      <h2>New pub</h2>
-      <paper-input label="Name" value="{{pubName}}"></paper-input>
-      <paper-icon-button label="save" icon="save" on-tap="_save" suffix></paper-icon-button>
+      <div style="margin:16px">
+        <h2>Admin</h2>
 
-      <!--
-      <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs" initialCount="20" filter="{{_computeFilter(searchString)}}">
-        <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
-      </template>
-      -->
+        <firebase-document id="editPub"></firebase-document>
 
+        <h3>Create / edit pub</h3>
+
+        <div class="save-button">
+          <paper-item>
+            <span id="buttonLabel">Create</span><paper-icon-button id="save-button" label="save" icon="save" on-tap="_save" suffix></paper-icon-button>
+            &nbsp;&nbsp;&nbsp;Delete<paper-icon-button id="delete-button" label="delete" icon="delete" on-tap="_delete" suffix></paper-icon-button>
+          </paper-item>
+        </div>
+
+        <div class="form">
+          <paper-input id="nameField" label="Name" value="{{pubName}}"></paper-input>
+          <paper-input label="Address line 1" value="{{address}}"></paper-input>
+          <paper-input label="City" value="{{city}}"></paper-input>
+          <paper-input label="County" value="{{county}}"></paper-input>
+          <paper-input label="Postcode" value="{{postcode}}"></paper-input>
+          <paper-input label="Latitude" value="{{latitude}}"></paper-input>
+          <paper-input label="Longitude" value="{{longitude}}"></paper-input>
+          <paper-input label="Is a hotel? (true or false)" value="{{hotel}}"></paper-input>
+          <paper-input label="Is in a airport? (true or false)" value="{{airport}}"></paper-input>
+          <paper-input label="Is is closed? (true or false)" value="{{closed}}"></paper-input>
+        </div>
+
+        <firebase-document id ="editPub"></firebase-document>
+
+        <!--
+        <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs" initialCount="20" filter="{{_computeFilter(searchString)}}">
+          <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
+        </template>
+        -->
+
+      </div>
     </div>
 
   </template>
@@ -47,6 +79,49 @@
         pubName: {
           type: String
         },
+        editKey: {
+          type: String
+        },
+        buttonLabel: {
+          type: String
+        }
+      },
+
+      _buttonLabel() {
+        if(this.editKey) {
+          return "Edit";
+        } else {
+          return "Create";
+        }
+      },
+
+      _save: function() {
+        if(!this.editKey) {
+          this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
+            + Math.floor(Math.random() * 100000000000000);
+        }
+
+        this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+          "city":this.city, "county":this.county, "postcode":this.postcode,
+          "lat":this.latitude, "lng":this.longitude,
+          "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+          "PubIsTemporaryClosed":"false", "id":this.editKey,
+          "address":this.address + ", " + this.city + ", "
+          + this.county + ", " + this.postcode};
+        this.$.editPub.saveValue('/pubs/', this.editKey);
+
+        // Save the generated pub data again in case we need to rebuild from
+        // the web scraper and re-introduce the new pubs + edits to that data
+        this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+          "city":this.city, "county":this.county, "postcode":this.postcode,
+          "lat":this.latitude, "lng":this.longitude,
+          "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+          "PubIsTemporaryClosed":"false", "id":this.editKey,
+          "address":this.address + ", " + this.city + ", "
+          + this.county + ", " + this.postcode};
+        this.$.editPub.saveValue('/userPubs/', this.editKey);
+
+        this.$.buttonLabel.innerHTML = 'Edit';
       }
     });
   </script>
