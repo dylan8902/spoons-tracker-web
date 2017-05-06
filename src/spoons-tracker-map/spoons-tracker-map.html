@@ -30,7 +30,7 @@
       <template is="dom-repeat" items="[[pubs]]" as="pub" initialCount="20">
         <google-map-marker title="[[pub.name]]" icon="/images/new-marker.png" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
       </template>
-      <template is="dom-repeat" items="[[visits]]" as="visit" initialCount="20">
+      <template is="dom-repeat" items="[[visits]]" as="visit" initialCount="20" observe="visit">
         <google-map-marker title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents>[[_getPubName(visit.$key)]]</google-map-marker>
       </template>
     </google-map>
@@ -45,7 +45,7 @@
           type: Array
         }
       },
-      
+
       _getPubName: function (key) {
         var pub = this.pubs.find(pub => pub.id === key);
         return pub.name;
