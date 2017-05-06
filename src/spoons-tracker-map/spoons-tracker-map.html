@@ -26,7 +26,7 @@
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
     <google-map fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
-      dragEvents>
+      dragEvents disabled="[[loading]]">
       <template is="dom-repeat" items="[[pubs]]" as="pub" initialCount="20">
         <google-map-marker title="[[pub.name]]" icon="/images/new-marker.png" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
       </template>
@@ -43,7 +43,17 @@
       properties: {
         visits: {
           type: Array
+        },
+
+        loading: {
+          type: Boolean,
+          computed: '_isLoading(pubs.length)',
+          notify: true
         }
+      },
+
+      _isLoading: function (pubCount) {
+        return pubCount <= 0;
       },
 
       _getPubName: function (key) {
