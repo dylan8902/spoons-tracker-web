@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
 
@@ -9,18 +11,30 @@
        :host {
         display: block;
       }
+      .address {
+        margin-left: 10px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        color: #737373;
+      }
     </style>
 
     <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
     <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}"></firebase-query>
+    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
     <div style="padding:16px">
       <p>You've visited [[visits.length]] wetherspoons, please find a list below:</p>
-      <ul>
         <template is="dom-repeat" items="{{visits}}" as="visit">
-          <li>[[_decode(visit.$key)]]</li>
+
+          <paper-item>
+            <paper-item-body>
+              <div>[[_getPubName(visit.$key)]]<span class="address">&nbsp;@&nbsp;[[_getAddress(visit.$key)]]</span></div>
+            </paper-item-body>
+          </paper-item>
+
         </template>
-      </ul>
     </div>
 
   </template>
@@ -35,8 +49,14 @@
         }
       },
 
-      _decode: function (text) {
-        return decodeURIComponent(text).replace(/\+/g, ' ');
+      _getPubName: function (key) {
+        var pub = this.pubs.find(pub => pub.id === key);
+        return pub.name;
+      },
+
+      _getAddress: function (key) {
+        var pub = this.pubs.find(pub => pub.id === key);
+        return pub.address;
       }
     });
   </script>
