@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="pub-admin-details">
+
+<dom-module id="spoons-tracker-admin">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-input {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    </style>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+
+    <!--<firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>-->
+
+    <div style="max-width: 750px;">
+
+      <h2>New pub</h2>
+      <paper-input label="Name" value="{{pubName}}"></paper-input>
+      <paper-icon-button label="save" icon="save" on-tap="_save" suffix></paper-icon-button>
+
+      <!--
+      <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs" initialCount="20" filter="{{_computeFilter(searchString)}}">
+        <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
+      </template>
+      -->
+
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'spoons-tracker-admin',
+
+      properties: {
+        pubName: {
+          type: String
+        },
+      }
+    });
+  </script>
+</dom-module>
