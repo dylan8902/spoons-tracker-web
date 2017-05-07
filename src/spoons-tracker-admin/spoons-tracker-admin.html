@@ -21,13 +21,18 @@
       }
       .save-button {
         float:right;
-      }
-      .userPubList {
-        float:right;
+        padding-top: 16px;
       }
       .form {
-        margin-top: 35px;
+        margin-top: 80px;
         margin-bottom: 35px;
+      }
+      .userPubList {
+        float: left;
+        margin-left: 16px;
+      }
+      .pubListLabel {
+        margin-right: 30px;
       }
     </style>
 
@@ -35,20 +40,20 @@
 
     <firebase-query id="query" path="/userPubs" data="{{pubs}}"></firebase-query>
 
-    <div style="max-width: 750px;">
+    <div style="max-width: 850px;">
 
       <div style="margin:16px">
         <h2>Admin</h2>
 
         <firebase-document id="editPub"></firebase-document>
 
-        <h3><span id="pageType">Create</span> pub</h3>
-
         <div class="userPubList">
-          <paper-dropdown-menu label="userPubList">
-            <paper-listbox class="dropdown-content" selected="{{selectedPub}}">
+          <span class="pubListLabel">Select user pub to edit or create new:</span>
+          <paper-dropdown-menu label="Pub / create new">
+            <paper-listbox class="dropdown-content" selected="{{selectedPub}}" attr-for-selected="id">
+              <paper-item id="create">Create new pub</paper-item>
               <template is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs">
-                <paper-item>[[pub.name]]</paper-item>
+                <paper-item id="{{pub.id}}">[[pub.name]] ([[pub.city]])</paper-item>
               </template>
             </paper-listbox>
           </paper-dropdown-menu>
@@ -69,18 +74,12 @@
           <paper-input label="Postcode" value="{{postcode}}"></paper-input>
           <paper-input label="Latitude" value="{{latitude}}"></paper-input>
           <paper-input label="Longitude" value="{{longitude}}"></paper-input>
-          <paper-input label="Is a hotel? (true or false)" value="{{hotel}}"></paper-input>
-          <paper-input label="Is in a airport? (true or false)" value="{{airport}}"></paper-input>
-          <paper-input label="Is is closed? (true or false)" value="{{closed}}"></paper-input>
+          <paper-input label="Is it a hotel? (true or false)" value="{{hotel}}"></paper-input>
+          <paper-input label="Is it in an airport? (true or false)" value="{{airport}}"></paper-input>
+          <paper-input label="Is it closed? (true or false)" value="{{closed}}"></paper-input>
         </div>
 
         <firebase-document id ="editPub"></firebase-document>
-
-        <!--
-        <template id="pubs" is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs" initialCount="20" filter="{{_computeFilter(searchString)}}">
-          <pub-list-item pub="[[pub]]" visited-pubs="{{userVisitedPubs}}"></pub-list-item>
-        </template>
-        -->
 
       </div>
     </div>
@@ -103,12 +102,43 @@
         },
         selectedPub: {
           type: Number,
-          observer: '_loadPub'
+          observer: '_onPubChange'
         }
       },
 
-      _loadPub() {
-        console.log(this.selectedPub);
+      _onPubChange() {
+        if(this.selectedPub != 'create') {
+          this._changeToEdit();
+        } else {
+          this._changeToCreate();
+        }
+      },
+
+      _changeToCreate() {
+        this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
+          + Math.floor(Math.random() * 100000000000000);
+          this.$.buttonLabel.innerHTML = 'Create';
+      },
+
+      _changeToEdit() {
+        this.editKey = this.selectedPub;
+        this.$.buttonLabel.innerHTML = 'Edit';
+
+        this.pubName = this.pubs.find(pub => pub.id === this.editKey).name;
+        this.address = this.pubs.find(pub => pub.id === this.editKey).addressLine1;
+        this.city = this.pubs.find(pub => pub.id === this.editKey).city;
+        this.county = this.pubs.find(pub => pub.id === this.editKey).county;
+        this.postcode = this.pubs.find(pub => pub.id === this.editKey).postcode;
+        this.latitude = this.pubs.find(pub => pub.id === this.editKey).lat;
+        this.longitude = this.pubs.find(pub => pub.id === this.editKey).lng;
+        this.hotel = this.pubs.find(pub => pub.id === this.editKey).isHotel;
+        this.airport = this.pubs.find(pub => pub.id === this.editKey).isAirport;
+        this.closed = this.pubs.find(pub => pub.id === this.editKey).pubIsClosed;
+      },
+
+      ready: function() {
+        this.selectedPub = 'create';
+        this._changeToCreate();
       },
 
       _buttonLabel() {
@@ -120,10 +150,6 @@
       },
 
       _save: function() {
-        if(!this.editKey) {
-          this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
-            + Math.floor(Math.random() * 100000000000000);
-        }
 
         this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
           "city":this.city, "county":this.county, "postcode":this.postcode,
@@ -145,8 +171,8 @@
           + this.county + ", " + this.postcode, "userPub":"true"};
         this.$.editPub.saveValue('/userPubs/', this.editKey);
 
-        this.$.buttonLabel.innerHTML = 'Edit';
-        this.$.pageType.innerHTML = 'Edit';
+        this._onPubChange();
+
       },
 
       _sortPubs: function(a, b) {
