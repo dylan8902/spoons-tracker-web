@@ -40,6 +40,7 @@
     </style>
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-document path="/users/[[user.uid]]/isAdmin" data={{isAdmin}}></firebase-document>
 
     <firebase-query id="query" path="/userPubs" data="{{pubs}}"></firebase-query>
 
@@ -52,8 +53,8 @@
 
         <div class="userPubList">
           <span class="pubListLabel">Select pub to edit or create new:</span>
-          <paper-dropdown-menu label="Pub / create new">
-            <paper-listbox class="dropdown-content" selected="{{selectedPub}}" attr-for-selected="id">
+          <paper-dropdown-menu label="Edit / create new">
+            <paper-listbox id="listbox" class="dropdown-content" selected="{{selectedPub}}" attr-for-selected="id">
               <paper-item id="create">Create new pub</paper-item>
               <template is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs">
                 <paper-item id="{{pub.id}}">[[pub.name]] ([[pub.city]])</paper-item>
@@ -153,6 +154,7 @@
       ready: function() {
         this.selectedPub = 'create';
         this._changeToCreate();
+        console.log(this.isAdmin);
       },
 
       _buttonLabel() {
@@ -164,35 +166,42 @@
       },
 
       _save: function() {
+        if(this.isAdmin === 'true') {
 
-        this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
-          "city":this.city, "county":this.county, "postcode":this.postcode,
-          "lat":this.latitude, "lng":this.longitude,
-          "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
-          "PubIsTemporaryClosed":"false", "id":this.editKey,
-          "address":this.address + ", " + this.city + ", "
-          + this.county + ", " + this.postcode, "userPub":"true"};
-        this.$.editPub.saveValue('/pubs/', this.editKey);
+          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+            "city":this.city, "county":this.county, "postcode":this.postcode,
+            "lat":this.latitude, "lng":this.longitude,
+            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+            "PubIsTemporaryClosed":"false", "id":this.editKey,
+            "address":this.address + ", " + this.city + ", "
+            + this.county + ", " + this.postcode, "userPub":"true"};
+          this.$.editPub.saveValue('/pubs/', this.editKey);
 
-        // Save the generated pub data again in case we need to rebuild from
-        // the web scraper and re-introduce the new pubs + edits to that data
-        this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
-          "city":this.city, "county":this.county, "postcode":this.postcode,
-          "lat":this.latitude, "lng":this.longitude,
-          "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
-          "PubIsTemporaryClosed":"false", "id":this.editKey,
-          "address":this.address + ", " + this.city + ", "
-          + this.county + ", " + this.postcode, "userPub":"true"};
-        this.$.editPub.saveValue('/userPubs/', this.editKey);
+          // Save the generated pub data again in case we need to rebuild from
+          // the web scraper and re-introduce the new pubs + edits to that data
+          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+            "city":this.city, "county":this.county, "postcode":this.postcode,
+            "lat":this.latitude, "lng":this.longitude,
+            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+            "PubIsTemporaryClosed":"false", "id":this.editKey,
+            "address":this.address + ", " + this.city + ", "
+            + this.county + ", " + this.postcode, "userPub":"true"};
+          this.$.editPub.saveValue('/userPubs/', this.editKey);
 
-        this.selectedPub = this.editKey;
+          this.selectedPub = this.editKey;
+
+        }
       },
 
       _delete: function() {
-        this.$.editPub.data = null;
-        this.$.editPub.saveValue('/pubs/', this.editKey);
-        this.$.editPub.saveValue('/userPubs/', this.editKey);
-        this._changeToCreate();
+        if(this.isAdmin === 'true') {
+
+          this.$.editPub.data = null;
+          this.$.editPub.saveValue('/pubs/', this.editKey);
+          this.$.editPub.saveValue('/userPubs/', this.editKey);
+          this._changeToCreate();
+
+        }
       },
 
       _sortPubs: function(a, b) {
