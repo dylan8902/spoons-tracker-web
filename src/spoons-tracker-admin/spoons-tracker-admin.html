@@ -1,6 +1,9 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
 <link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
@@ -19,6 +22,9 @@
       .save-button {
         float:right;
       }
+      .userPubList {
+        float:right;
+      }
       .form {
         margin-top: 35px;
         margin-bottom: 35px;
@@ -27,7 +33,7 @@
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
 
-    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
+    <firebase-query id="query" path="/userPubs" data="{{pubs}}"></firebase-query>
 
     <div style="max-width: 750px;">
 
@@ -36,7 +42,17 @@
 
         <firebase-document id="editPub"></firebase-document>
 
-        <h3>Create / edit pub</h3>
+        <h3><span id="pageType">Create</span> pub</h3>
+
+        <div class="userPubList">
+          <paper-dropdown-menu label="userPubList">
+            <paper-listbox class="dropdown-content" selected="{{selectedPub}}">
+              <template is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs">
+                <paper-item>[[pub.name]]</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
 
         <div class="save-button">
           <paper-item>
@@ -84,7 +100,15 @@
         },
         buttonLabel: {
           type: String
+        },
+        selectedPub: {
+          type: Number,
+          observer: '_loadPub'
         }
+      },
+
+      _loadPub() {
+        console.log(this.selectedPub);
       },
 
       _buttonLabel() {
@@ -107,7 +131,7 @@
           "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
           "PubIsTemporaryClosed":"false", "id":this.editKey,
           "address":this.address + ", " + this.city + ", "
-          + this.county + ", " + this.postcode};
+          + this.county + ", " + this.postcode, "userPub":"true"};
         this.$.editPub.saveValue('/pubs/', this.editKey);
 
         // Save the generated pub data again in case we need to rebuild from
@@ -118,10 +142,16 @@
           "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
           "PubIsTemporaryClosed":"false", "id":this.editKey,
           "address":this.address + ", " + this.city + ", "
-          + this.county + ", " + this.postcode};
+          + this.county + ", " + this.postcode, "userPub":"true"};
         this.$.editPub.saveValue('/userPubs/', this.editKey);
 
         this.$.buttonLabel.innerHTML = 'Edit';
+        this.$.pageType.innerHTML = 'Edit';
+      },
+
+      _sortPubs: function(a, b) {
+        if(a.name === b.name) return 0;
+        return a.name < b.name ? -1 : 1;
       }
     });
   </script>
