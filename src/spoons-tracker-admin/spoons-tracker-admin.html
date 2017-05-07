@@ -34,6 +34,9 @@
       .pubListLabel {
         margin-right: 30px;
       }
+      paper-dropdown-menu {
+        width: 300px;
+      }
     </style>
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
@@ -48,7 +51,7 @@
         <firebase-document id="editPub"></firebase-document>
 
         <div class="userPubList">
-          <span class="pubListLabel">Select user pub to edit or create new:</span>
+          <span class="pubListLabel">Select pub to edit or create new:</span>
           <paper-dropdown-menu label="Pub / create new">
             <paper-listbox class="dropdown-content" selected="{{selectedPub}}" attr-for-selected="id">
               <paper-item id="create">Create new pub</paper-item>
@@ -118,6 +121,17 @@
         this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
           + Math.floor(Math.random() * 100000000000000);
           this.$.buttonLabel.innerHTML = 'Create';
+
+          this.pubName = '';
+          this.address = '';
+          this.city = '';
+          this.county = '';
+          this.postcode = '';
+          this.latitude = '';
+          this.longitude = '';
+          this.hotel = '';
+          this.airport = '';
+          this.closed = '';
       },
 
       _changeToEdit() {
@@ -133,7 +147,7 @@
         this.longitude = this.pubs.find(pub => pub.id === this.editKey).lng;
         this.hotel = this.pubs.find(pub => pub.id === this.editKey).isHotel;
         this.airport = this.pubs.find(pub => pub.id === this.editKey).isAirport;
-        this.closed = this.pubs.find(pub => pub.id === this.editKey).pubIsClosed;
+        this.closed = this.pubs.find(pub => pub.id === this.editKey).PubIsClosed;
       },
 
       ready: function() {
@@ -171,8 +185,14 @@
           + this.county + ", " + this.postcode, "userPub":"true"};
         this.$.editPub.saveValue('/userPubs/', this.editKey);
 
-        this._onPubChange();
+        this.selectedPub = this.editKey;
+      },
 
+      _delete: function() {
+        this.$.editPub.data = null;
+        this.$.editPub.saveValue('/pubs/', this.editKey);
+        this.$.editPub.saveValue('/userPubs/', this.editKey);
+        this._changeToCreate();
       },
 
       _sortPubs: function(a, b) {
