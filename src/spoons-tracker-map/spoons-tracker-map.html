@@ -26,13 +26,17 @@
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
     <google-map fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
-      dragEvents>
-      <template is="dom-repeat" items="[[pubs]]" as="pub" initialCount="20">
-        <google-map-marker title="[[pub.name]]" icon="[[_getMarkerUrl(pub.$key, visits.*)]]" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
-      </template>
-    </google-map>
+      dragEvents disabled="[[loading]]">
 
-    [[visits]]
+      <template is="dom-repeat" items="[[pubs]]" as="pub">
+        <google-map-marker title="[[_getPubName(pub.$key)]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
+      </template>
+
+      <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
+        <google-map-marker title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents>[[_getPubName(visit.$key)]]</google-map-marker>
+      </template>
+
+    </google-map>
 
   </template>
   <script>
@@ -42,15 +46,32 @@
       properties: {
         visits: {
           type: Array
+        },
+
+        loading: {
+          type: Boolean,
+          computed: '_isLoading(pubs.length)',
+          notify: true
         }
       },
 
-      _getMarkerUrl: function(pubName, visits) {
-        if (visits.value && visits.value.find(visit => visit.$key.includes(pubName))) {
-          return "/images/visited-marker.png";
-        } else {
-          return "/images/new-marker.png";
-        }
+      _isLoading: function (pubCount) {
+        return pubCount <= 0;
+      },
+
+      _getPubName: function (key) {
+        var pub = this.pubs.find(pub => pub.id === key);
+        return pub.name;
+      },
+
+      _getPubLat: function (key) {
+        var pub = this.pubs.find(pub => pub.id === key);
+        return pub.lat;
+      },
+
+      _getPubLng: function (key) {
+        var pub = this.pubs.find(pub => pub.id === key);
+        return pub.lng;
       }
     });
   </script>
