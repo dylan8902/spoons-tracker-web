@@ -25,3 +25,5 @@ deploy:
   provider: firebase
   on:
     branch: develop
+notifications:
+    slack: cardiffbros:NcQoImqi1cridUZ6uoGapwVD
