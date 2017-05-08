@@ -26,4 +26,4 @@ deploy:
   on:
     branch: develop
 notifications:
-    slack: cardiffbros:$SLACK_TOKEN
+    slack: cardiffbros:qJIFy4ZpyzyDGAOvAtSI4CEx
