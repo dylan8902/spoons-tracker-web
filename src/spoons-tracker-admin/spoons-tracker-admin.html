@@ -1,6 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -80,9 +82,27 @@
           <paper-input label="Postcode" value="{{postcode}}"></paper-input>
           <paper-input label="Latitude" value="{{latitude}}"></paper-input>
           <paper-input label="Longitude" value="{{longitude}}"></paper-input>
-          <paper-input label="Is it a hotel? (true or false)" value="{{hotel}}"></paper-input>
-          <paper-input label="Is it in an airport? (true or false)" value="{{airport}}"></paper-input>
-          <paper-input label="Is it closed? (true or false)" value="{{closed}}"></paper-input>
+          <paper-item>
+            <span style="margin-right: 20px">Is it a hotel?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{hotel}}">
+              <paper-radio-button value="true" name="hotel">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="hotel">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
+          <paper-item>
+            <span style="margin-right: 20px">Is it in an airport?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{airport}}">
+              <paper-radio-button value="true" name="airport">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="airport">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
+          <paper-item>
+            <span style="margin-right: 20px">Is it closed?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{closed}}">
+              <paper-radio-button value="true" name="closed">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="closed">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
         </div>
 
         <firebase-document id ="editPub"></firebase-document>
