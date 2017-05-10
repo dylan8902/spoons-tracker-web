@@ -1,0 +1,296 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-query.html">
+<link rel="import" href="../../bower_components/polymerfire/firebase-document.html">
+
+<dom-module id="spoons-tracker-admin">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      paper-input {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+      .save-button {
+        float:right;
+        padding-top: 16px;
+      }
+      .form {
+        margin-top: 100px;
+        margin-bottom: 60px;
+      }
+      .userPubList {
+        float: left;
+        margin-left: 16px;
+        margin-bottom: -86px;
+        margin-right: 210px;
+      }
+      .pubListLabel {
+        margin-right: 30px;
+      }
+      paper-dropdown-menu {
+        width: 300px;
+      }
+      paper-toast {
+        left: auto !important;
+      }
+    </style>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-document path="/users/[[user.uid]]/isAdmin" data={{isAdmin}}></firebase-document>
+
+    <firebase-query id="query" path="/userPubs" data="{{pubs}}"></firebase-query>
+
+    <div style="max-width: 850px;">
+
+      <div style="margin:16px">
+        <h2>Admin</h2>
+
+        <firebase-document id="editPub"></firebase-document>
+
+        <div class="userPubList">
+          <span class="pubListLabel">Select pub to edit or create new:</span>
+          <paper-dropdown-menu label="Edit / create new">
+            <paper-listbox id="listbox" class="dropdown-content" selected="{{selectedPub}}" attr-for-selected="id">
+              <paper-item id="create">Create new pub</paper-item>
+              <template is="dom-repeat" items="{{pubs}}" as="pub" sort="_sortPubs">
+                <paper-item id="{{pub.id}}">[[pub.name]] ([[pub.city]])</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+        </div>
+
+        <div class="save-button">
+          <paper-item>
+
+            <span id="buttonLabel">Create</span><paper-icon-button id="save-button"
+            label="save" icon="save" on-tap="_save" on-click="_openSavedToast" suffix></paper-icon-button>
+
+            &nbsp;&nbsp;&nbsp;Delete<paper-icon-button id="delete-button"
+            label="delete" icon="delete" on-tap="_delete"
+            disabled="[[deleteDisabled]]" on-click="_openDeletedToast" suffix></paper-icon-button>
+
+          </paper-item>
+        </div>
+
+        <div id="form" class="form">
+          <paper-input id="nameField" label="Name" value="{{pubName}}"></paper-input>
+          <paper-input label="Address line 1" value="{{address}}"></paper-input>
+          <paper-input label="City" value="{{city}}"></paper-input>
+          <paper-input label="County" value="{{county}}"></paper-input>
+          <paper-input label="Postcode" value="{{postcode}}"></paper-input>
+          <paper-input label="Latitude" value="{{latitude}}"></paper-input>
+          <paper-input label="Longitude" value="{{longitude}}"></paper-input>
+          <br/>
+          <paper-item>
+            <span style="margin-right: 20px">Is it a hotel?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{hotel}}">
+              <paper-radio-button value="true" name="hotel">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="hotel">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
+          <paper-item>
+            <span style="margin-right: 20px">Is it in an airport?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{airport}}">
+              <paper-radio-button value="true" name="airport">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="airport">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
+          <paper-item>
+            <span style="margin-right: 20px">Is it closed?</span>
+            <paper-radio-group attr-for-selected="value" selected="{{closed}}">
+              <paper-radio-button value="true" name="closed">Yes</paper-radio-button>
+              <paper-radio-button value="false" name="closed">No</paper-radio-button>
+            </paper-radio-group>
+          </paper-item>
+        </div>
+
+        <firebase-document id ="editPub"></firebase-document>
+
+      </div>
+    </div>
+
+    <paper-toast id="toast" text="Pub details have been successfully saved"></paper-toast>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'spoons-tracker-admin',
+
+      properties: {
+        pubName: {
+          type: String
+        },
+        address: {
+          type: String
+        },
+        city: {
+          type: String
+        },
+        county: {
+          type: String
+        },
+        postcode: {
+          type: String
+        },
+        latitude: {
+          type: String
+        },
+        longitude: {
+          type: String
+        },
+        hotel: {
+          type: String
+        },
+        airport: {
+          type: String
+        },
+        closed: {
+          type: String
+        },
+        editKey: {
+          type: String
+        },
+        buttonLabel: {
+          type: String
+        },
+        selectedPub: {
+          type: Number,
+          observer: '_onPubChange'
+        },
+        deleteAvailable: {
+          type: Boolean
+        }
+      },
+
+      _onPubChange() {
+        if(this.selectedPub != 'create') {
+          this._changeToEdit();
+        } else {
+          this._changeToCreate();
+        }
+      },
+
+      _changeToCreate() {
+        this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
+          + Math.floor(Math.random() * 100000000000000);
+          this.$.buttonLabel.innerHTML = 'Create';
+
+          this.pubName = '';
+          this.address = '';
+          this.city = '';
+          this.county = '';
+          this.postcode = '';
+          this.latitude = '';
+          this.longitude = '';
+          this.hotel = '';
+          this.airport = '';
+          this.closed = '';
+
+          this._isDeleteDisabled(true);
+      },
+
+      _changeToEdit() {
+        this.editKey = this.selectedPub;
+        this.$.buttonLabel.innerHTML = 'Edit';
+
+        this.pubName = this.pubs.find(pub => pub.id === this.editKey).name;
+        this.address = this.pubs.find(pub => pub.id === this.editKey).addressLine1;
+        this.city = this.pubs.find(pub => pub.id === this.editKey).city;
+        this.county = this.pubs.find(pub => pub.id === this.editKey).county;
+        this.postcode = this.pubs.find(pub => pub.id === this.editKey).postcode;
+        this.latitude = this.pubs.find(pub => pub.id === this.editKey).lat;
+        this.longitude = this.pubs.find(pub => pub.id === this.editKey).lng;
+        this.hotel = this.pubs.find(pub => pub.id === this.editKey).isHotel;
+        this.airport = this.pubs.find(pub => pub.id === this.editKey).isAirport;
+        this.closed = this.pubs.find(pub => pub.id === this.editKey).PubIsClosed;
+
+        this._isDeleteDisabled(false);
+      },
+
+      ready: function() {
+        this.selectedPub = 'create';
+        this._changeToCreate();
+      },
+
+      _buttonLabel() {
+        if(this.editKey) {
+          return "Edit";
+        } else {
+          return "Create";
+        }
+      },
+
+      _save: function() {
+        if(this.isAdmin === 'true') {
+
+          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+            "city":this.city, "county":this.county, "postcode":this.postcode,
+            "lat":this.latitude, "lng":this.longitude,
+            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+            "PubIsTemporaryClosed":"false", "id":this.editKey,
+            "address":this.address + ", " + this.city + ", "
+            + this.county + ", " + this.postcode, "userPub":"true"};
+          this.$.editPub.saveValue('/pubs/', this.editKey);
+
+          // Save the generated pub data again in case we need to rebuild from
+          // the web scraper and re-introduce the new pubs + edits to that data
+          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+            "city":this.city, "county":this.county, "postcode":this.postcode,
+            "lat":this.latitude, "lng":this.longitude,
+            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+            "PubIsTemporaryClosed":"false", "id":this.editKey,
+            "address":this.address + ", " + this.city + ", "
+            + this.county + ", " + this.postcode, "userPub":"true"};
+          this.$.editPub.saveValue('/userPubs/', this.editKey);
+
+          this.selectedPub = this.editKey;
+
+        }
+      },
+
+      _delete: function() {
+        if(this.isAdmin === 'true') {
+
+          this.$.editPub.data = null;
+          this.$.editPub.saveValue('/pubs/', this.editKey);
+          this.$.editPub.saveValue('/userPubs/', this.editKey);
+          this._changeToCreate();
+
+        }
+      },
+
+      _sortPubs: function(a, b) {
+        if(a.name === b.name) return 0;
+        return a.name < b.name ? -1 : 1;
+      },
+
+      _isDeleteDisabled: function(disabled) {
+        this.deleteDisabled = disabled;
+      },
+
+      _openSavedToast: function() {
+        this.$.toast.text = "Pub details have been successfully saved";
+        this.$.toast.open();
+      },
+
+      _openDeletedToast: function() {
+        this.$.toast.text = "Pub has been successfully deleted";
+        this.$.toast.open();
+      }
+    });
+  </script>
+</dom-module>

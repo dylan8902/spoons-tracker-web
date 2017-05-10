@@ -24,8 +24,9 @@
     <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}"></firebase-query>
     <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
 
-    <div style="padding:16px">
-      <p>You've visited [[visits.length]] wetherspoons, please find a list below:</p>
+    <div style="margin:16px">
+    <h2>Track my visits</h2>
+      <p>You've visited [[visits.length]] 'spoons:</p>
         <template is="dom-repeat" items="{{visits}}" as="visit">
 
           <paper-item>
