@@ -59,6 +59,10 @@
         width: 100%;
         --paper-progress-container-color: transparent;
       }
+
+      .username {
+        font-size: 13pt;
+      }
     </style>
 
     <firebase-app auth-domain="spoonstracker.firebaseapp.com" database-url="https://spoonstracker.firebaseio.com/" api-key="AIzaSyBHB5vVTut1aaaSXdX0zqP0AO8zOc1-B6Q">
@@ -76,8 +80,11 @@
       <app-drawer id="drawer">
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="home" href="/home">Home</a>
+          <template is="dom-if" if="{{!user}}">
+            <a name="login" href="/login">Login</a>
+          </template>
           <template is="dom-if" if="{{user}}">
+            <a name="home" href="/home">Home</a>
             <a name="pubs" href="/pubs">Find a 'spoons</a>
             <a name="map" href="/map">Map</a>
             <a name="tracker" href="/tracker">Track my visits</a>
@@ -95,13 +102,14 @@
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>'Spoons Tracker</div>
-            <template is="dom-if" if="[[user]]">Hi [[user.displayName]]!</template>
+            <template is="dom-if" if="[[user]]"><span class="username">[[user.displayName]]</span></template>
             <paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button>
             <paper-progress indeterminate="[[loading]]" bottom-item></paper-progress>
           </app-toolbar>
         </app-header>
 
         <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="view404" role="main">
+          <spoons-tracker-login name="login"></spoons-tracker-login>
           <spoons-tracker-home name="home"></spoons-tracker-home>
           <spoons-tracker-users name="users"></spoons-tracker-users>
           <spoons-tracker-pubs name="pubs" loading="{{loading}}"></spoons-tracker-pubs>
@@ -149,7 +157,7 @@
       ],
 
       _routePageChanged: function (page) {
-        this.page = page || 'home';
+        this.page = page || 'login';
 
         if (!this.$.drawer.persistent) {
           this.$.drawer.close();
@@ -169,6 +177,7 @@
       toggleSignIn: function () {
         if (this.user) {
           this.signOut();
+          window.location = '/login';
         } else {
           this.signIn();
         }
