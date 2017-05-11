@@ -62,6 +62,8 @@
 
       .username {
         font-size: 12pt;
+        width: 90px;
+        text-align: center;
       }
     </style>
 
@@ -102,7 +104,7 @@
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>'Spoons Tracker</div>
-            <template is="dom-if" if="[[user]]"><span class="username">[[user.displayName]]</span></template>
+            <template is="dom-if" if="[[user]]"><div class="username">[[user.displayName]]</div></template>
             <paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button>
             <paper-progress indeterminate="[[loading]]" bottom-item></paper-progress>
           </app-toolbar>
