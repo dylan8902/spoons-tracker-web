@@ -76,11 +76,11 @@
           <paper-item>
 
             <span id="buttonLabel">Create</span><paper-icon-button id="save-button"
-            label="save" icon="save" on-tap="_save" on-click="_openSavedToast" suffix></paper-icon-button>
+            label="save" icon="save" on-tap="_save" suffix></paper-icon-button>
 
             &nbsp;&nbsp;&nbsp;Delete<paper-icon-button id="delete-button"
             label="delete" icon="delete" on-tap="_delete"
-            disabled="[[deleteDisabled]]" on-click="_openDeletedToast" suffix></paper-icon-button>
+            disabled="[[deleteDisabled]]" suffix></paper-icon-button>
 
           </paper-item>
         </div>
@@ -187,20 +187,20 @@
       _changeToCreate() {
         this.editKey = 'a00000000-' + Math.floor(Date.now() / 1000) +"-"+
           + Math.floor(Math.random() * 100000000000000);
-          this.$.buttonLabel.innerHTML = 'Create';
+        this.$.buttonLabel.innerHTML = 'Create';
 
-          this.pubName = '';
-          this.address = '';
-          this.city = '';
-          this.county = '';
-          this.postcode = '';
-          this.latitude = '';
-          this.longitude = '';
-          this.hotel = '';
-          this.airport = '';
-          this.closed = '';
+        this.pubName = '';
+        this.address = '';
+        this.city = '';
+        this.county = '';
+        this.postcode = '';
+        this.latitude = '';
+        this.longitude = '';
+        this.hotel = '';
+        this.airport = '';
+        this.closed = '';
 
-          this._isDeleteDisabled(true);
+        this._isDeleteDisabled(true);
       },
 
       _changeToEdit() {
@@ -237,28 +237,38 @@
       _save: function() {
         if(this.isAdmin === 'true') {
 
-          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
-            "city":this.city, "county":this.county, "postcode":this.postcode,
-            "lat":this.latitude, "lng":this.longitude,
-            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
-            "PubIsTemporaryClosed":"false", "id":this.editKey,
-            "address":this.address + ", " + this.city + ", "
-            + this.county + ", " + this.postcode, "userPub":"true"};
-          this.$.editPub.saveValue('/pubs/', this.editKey);
+          if(this.pubName && this.city) {
 
-          // Save the generated pub data again in case we need to rebuild from
-          // the web scraper and re-introduce the new pubs + edits to that data
-          this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
-            "city":this.city, "county":this.county, "postcode":this.postcode,
-            "lat":this.latitude, "lng":this.longitude,
-            "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
-            "PubIsTemporaryClosed":"false", "id":this.editKey,
-            "address":this.address + ", " + this.city + ", "
-            + this.county + ", " + this.postcode, "userPub":"true"};
-          this.$.editPub.saveValue('/userPubs/', this.editKey);
+            this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+              "city":this.city, "county":this.county, "postcode":this.postcode,
+              "lat":this.latitude, "lng":this.longitude,
+              "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+              "PubIsTemporaryClosed":"false", "id":this.editKey,
+              "address":this.address + ", " + this.city + ", "
+              + this.county + ", " + this.postcode, "userPub":"true"};
+            this.$.editPub.saveValue('/pubs/', this.editKey);
 
-          this.selectedPub = this.editKey;
+            // Save the generated pub data again in case we need to rebuild from
+            // the web scraper and re-introduce the new pubs + edits to that data
+            this.$.editPub.data = {"name":this.pubName, "addressLine1":this.address,
+              "city":this.city, "county":this.county, "postcode":this.postcode,
+              "lat":this.latitude, "lng":this.longitude,
+              "isHotel":this.hotel, "isAirport":this.airport, "PubIsClosed":this.closed,
+              "PubIsTemporaryClosed":"false", "id":this.editKey,
+              "address":this.address + ", " + this.city + ", "
+              + this.county + ", " + this.postcode, "userPub":"true"};
+            this.$.editPub.saveValue('/userPubs/', this.editKey);
 
+            this.selectedPub = this.editKey;
+
+            this._openSavedToast();
+
+          } else {
+            this._openValidationToast();
+          }
+
+        } else {
+          this._openAdminToast();
         }
       },
 
@@ -270,6 +280,10 @@
           this.$.editPub.saveValue('/userPubs/', this.editKey);
           this._changeToCreate();
 
+          this._openDeletedToast();
+
+        } else {
+          this._openAdminToast();
         }
       },
 
@@ -289,6 +303,16 @@
 
       _openDeletedToast: function() {
         this.$.toast.text = "Pub has been successfully deleted";
+        this.$.toast.open();
+      },
+
+      _openValidationToast: function() {
+        this.$.toast.text = "Please provide a pub name and city";
+        this.$.toast.open();
+      },
+
+      _openAdminToast: function() {
+        this.$.toast.text = "You need to be admin to create or edit a pub";
         this.$.toast.open();
       }
     });
