@@ -1,0 +1,46 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/polymerfire/firebase-auth.html">
+
+<dom-module id="spoons-tracker-login">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
+
+    <div style="margin: 16px">
+      <h2>Welcome to 'Spoons Tracker</h2>
+      <p>Please login using facebook, click the lock to continue<paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button></p>
+      <template is="dom-if" if="{{user}}">
+        <script>
+          window.location = '/home';
+        </script>
+      </template>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'spoons-tracker-login',
+
+      toggleSignIn: function () {
+        if (this.user) {
+          this.signOut();
+        } else {
+          this.signIn();
+        }
+      },
+
+      signIn: function (e) {
+        this.$.auth.signInWithPopup();
+      },
+
+      signOut: function (e) {
+        this.$.auth.signOut();
+      },
+    });
+  </script>
+</dom-module>
