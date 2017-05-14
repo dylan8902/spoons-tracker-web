@@ -14,7 +14,8 @@
 
     <div style="margin: 16px">
       <h2>Welcome to 'Spoons Tracker</h2>
-      <p>Please login using facebook, click the lock to continue<paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button></p>
+      <p>Use this website to keep track of your visits to 'Spoons pubs</p>
+      <p>Please begin by logging in using Facebook, click the lock to continue<paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button></p>
       <template is="dom-if" if="{{user}}">
         <script>
           window.location = '/home';
