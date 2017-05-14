@@ -26,16 +26,18 @@
 
     <div style="margin:16px">
     <h2>Track my visits</h2>
-      <p>You've visited [[visits.length]] 'spoons:</p>
-        <template is="dom-repeat" items="{{visits}}" as="visit">
+      <p>You've visited [[visits.length]] out of [[pubs.length]] 'spoons ([[_percentage(visits.length, pubs.length)]]):</p>
 
+      <template is="dom-if" if="[[pubs.length]] > 0">
+        <template is="dom-repeat" items="{{visits}}" as="visit">
           <paper-item>
             <paper-item-body>
               <div>[[_getPubName(visit.$key)]][[_isClosed(visit.$key)]]<span class="address">&nbsp;@&nbsp;[[_getAddress(visit.$key)]]</span></div>
             </paper-item-body>
           </paper-item>
-
         </template>
+      </template>
+
     </div>
 
   </template>
@@ -66,6 +68,14 @@
           return " (closed)";
         } else {
           return "";
+        }
+      },
+
+      _percentage: function(a, b) {
+        if(a && b) {
+          return Math.round((a / b) * 100) + '%';
+        } else {
+          return "0%";
         }
       }
     });
