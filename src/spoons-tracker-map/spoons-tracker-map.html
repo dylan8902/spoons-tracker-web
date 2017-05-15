@@ -15,7 +15,7 @@
       }
 
       google-map {
-        height: 100vh;
+        height: 90vh;
       }
     </style>
 
@@ -25,15 +25,15 @@
     <firebase-query id="query" path="/pubs" data="{{livePubs}}"></firebase-query>
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
-    <google-map fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
+    <google-map id="map" fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
       dragEvents disabled="[[loading]]">
 
       <template is="dom-repeat" items="[[pubs]]" as="pub">
-        <google-map-marker title="[[_getPubName(pub.$key)]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
+        <google-map-marker map="[[map]]" title="[[_getPubName(pub.$key)]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents>[[pub.name]]</google-map-marker>
       </template>
 
       <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
-        <google-map-marker title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents>[[_getPubName(visit.$key)]]</google-map-marker>
+        <google-map-marker map="[[map]]" title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents>[[_getPubName(visit.$key)]]</google-map-marker>
       </template>
 
     </google-map>
