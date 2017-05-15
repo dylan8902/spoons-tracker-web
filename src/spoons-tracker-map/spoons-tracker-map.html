@@ -31,12 +31,14 @@
         <google-map id="map" fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
             dragEvents disabled="[[loading]]">
 
-            <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
-              <google-map-marker map="[[map]]" title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents><strong>[[_getPubName(visit.$key)]]</strong><br/>[[_getPubAddressLine1(visit.$key)]]<br/>[[_getPubCity(visit.$key)]]<br/>[[_getPubPostcode(visit.$key)]]</google-map-marker>
+            <template is="dom-if" if="[[_getPubName(visit.$key)]] > 0">
+              <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
+                <google-map-marker map="[[map]]" title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents><strong>[[_getPubName(visit.$key)]]</strong><br/>[[_getPubAddressLine1(visit.$key)]]<br/>[[_getPubCity(visit.$key)]]<br/>[[_getPubPostcode(visit.$key)]]</google-map-marker>
+              </template>
             </template>
 
             <template is="dom-repeat" items="[[pubs]]" as="pub">
-              <google-map-marker map="[[map]]" title="[[_getPubName(pub.$key)]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents><strong>[[pub.name]]</strong><br/>[[pub.addressLine1]]<br/>[[pub.city]]<br/>[[pub.postcode]]</google-map-marker>
+              <google-map-marker map="[[map]]" title="[[pub.name]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents><strong>[[pub.name]]</strong><br/>[[pub.addressLine1]]<br/>[[pub.city]]<br/>[[pub.postcode]]</google-map-marker>
             </template>
 
         </google-map>
@@ -67,33 +69,46 @@
 
       _getPubName: function (key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.name;
+        if(pub) {
+          return pub.name;
+        }
       },
 
       _getPubLat: function (key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.lat;
+        if(pub) {
+          return pub.lat;
+        }
       },
 
       _getPubLng: function (key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.lng;
+        if(pub) {
+          return pub.lng;
+        }
       },
 
       _getPubAddressLine1: function(key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.addressLine1;
+        if(pub) {
+          return pub.addressLine1;
+        }
       },
 
       _getPubCity: function(key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.city;
+        if(pub) {
+          return pub.city;
+        }
       },
 
       _getPubPostcode: function(key) {
         var pub = this.pubs.find(pub => pub.id === key);
-        return pub.postcode;
+        if(pub) {
+          return pub.postcode;
+        }
       }
+
     });
   </script>
 </dom-module>
