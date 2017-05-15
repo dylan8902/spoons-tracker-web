@@ -23,7 +23,7 @@
 
     <paper-item>
       <paper-item-body two-line>
-        <div>[[pub.name]]</div>
+        <div>[[pub.name]]<template is="dom-if" if="[[pub.PubIsClosed]]"> ❌</template></div>
         <div secondary>[[pub.address]]</div>
       </paper-item-body>
       <paper-icon-button id="visited-button" icon="check-circle" on-tap="_toggleVisited"></paper-icon-button>
