@@ -28,8 +28,8 @@
     <h2>My visits</h2>
       <p>You've visited [[visits.length]] out of [[pubs.length]] 'spoons ([[_percentage(visits.length, pubs.length)]]):</p>
 
-      <template is="dom-if" if="[[pubs.length]] > 890">
-        <template is="dom-if" if="[[visits.length]] > 0">
+      <template is="dom-if" if="[[_checkLength(pubs.length)]]">
+        <template is="dom-if" if="[[_checkLength(visits.length)]]">
 
           <template is="dom-repeat" items="{{visits}}" as="visit">
             <paper-item>
@@ -66,7 +66,7 @@
         if(pub) {
           return pub.name;
         } else {
-          return "Deleted pub";
+          return "Error loading data, please refresh";
         }
       },
 
@@ -102,6 +102,14 @@
 
       _checkPubExists: function(key) {
         return this.pubs.find(pub => pub.id === key);
+      },
+
+      _checkLength: function(length) {
+        if(length > 0) {
+          return true;
+        } else {
+          return false;
+        }
       }
     });
   </script>
