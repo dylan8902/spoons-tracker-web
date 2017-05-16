@@ -26,24 +26,25 @@
     <app-indexeddb-mirror key="pubs" data="{{livePubs}}" persisted-data="{{pubs}}"></app-indexeddb-mirror>
 
     <template is="dom-if" if="[[_checkLength(pubs.length)]]">
-      <template is="dom-if" if="[[_checkLength(visits.length)]]">
 
-        <google-map id="map" fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
-            dragEvents disabled="[[loading]]">
+      <google-map id="map" fit-to-marker api-key="AIzaSyCRfz4-IIBmyNYn4PSSyG8YVkKfseU2HtA" latitude="54.843915" longitude="-4.290579" zoom="5"
+          dragEvents disabled="[[loading]]">
 
-            <template is="dom-if" if="[[_getPubName(visit.$key)]] > 0">
-              <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
-                <google-map-marker map="[[map]]" title="[[_getPubName(visit.$key)]]" icon="/images/visited-marker.png" z-index="999" latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]" draggable clickEvents><strong>[[_getPubName(visit.$key)]]</strong><br/>[[_getPubAddressLine1(visit.$key)]]<br/>[[_getPubCity(visit.$key)]]<br/>[[_getPubPostcode(visit.$key)]]</google-map-marker>
-              </template>
+          <template is="dom-if" if="[[_getPubName(visit.$key)]] > 0">
+            <template is="dom-repeat" items="[[visits]]" as="visit" observe="visit">
+              <google-map-marker map="[[map]]" title="[[_getPubName(visit.$key)]]"
+                icon="/images/visited-marker.png" z-index="999"
+                latitude="[[_getPubLat(visit.$key)]]" longitude="[[_getPubLng(visit.$key)]]"
+                draggable clickEvents><strong>[[_getPubName(visit.$key)]]</strong><br/>[[_getPubAddressLine1(visit.$key)]]<br/>[[_getPubCity(visit.$key)]]<br/>[[_getPubPostcode(visit.$key)]]</google-map-marker>
             </template>
+          </template>
 
-            <template is="dom-repeat" items="[[pubs]]" as="pub">
-              <google-map-marker map="[[map]]" title="[[pub.name]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents><strong>[[pub.name]]</strong><br/>[[pub.addressLine1]]<br/>[[pub.city]]<br/>[[pub.postcode]]</google-map-marker>
-            </template>
+          <template is="dom-repeat" items="[[pubs]]" as="pub">
+            <google-map-marker map="[[map]]" title="[[pub.name]]" icon="/images/new-marker.png" z-index="998" latitude="[[pub.lat]]" longitude="[[pub.lng]]" draggable clickEvents><strong>[[pub.name]]</strong><br/>[[pub.addressLine1]]<br/>[[pub.city]]<br/>[[pub.postcode]]</google-map-marker>
+          </template>
 
-        </google-map>
+      </google-map>
 
-      </template>
     </template>
 
   </template>
@@ -114,6 +115,17 @@
           return true;
         } else {
           return false;
+        }
+      },
+
+      _toggleVisit: function(key) {
+        var visit = this.visits.find(visit => visit.$key === key);
+        if(visit) {
+          console.log("un visit pub");
+          //this.set('visits.' + key, null);
+        } else {
+          console.log("visit pub");
+          //this.set('visits.' + key, true);
         }
       }
 
