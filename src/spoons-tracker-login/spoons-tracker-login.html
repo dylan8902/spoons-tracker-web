@@ -16,6 +16,8 @@
       <h2>Welcome to 'Spoons Tracker</h2>
       <p>Use this website to keep track of your visits to 'Spoons pubs</p>
       <p>Please begin by logging in using Facebook, click the lock to continue<paper-icon-button icon="lock" on-tap="toggleSignIn"></paper-icon-button></p>
+      <br/>
+      <span style="font-size: 10pt; color: gray"><strong>Note: </strong>Please ensure third party cookies are enabled and pop-ups are not blocked, both of these are required to login</span>
       <template is="dom-if" if="{{user}}">
         <script>
           window.location = '/home';
