@@ -50,6 +50,7 @@
 
     <firebase-auth id="auth" user="{{user}}" provider="facebook"></firebase-auth>
     <firebase-document path="/users/[[user.uid]]/isAdmin" data={{isAdmin}}></firebase-document>
+    <firebase-document id="properties" path="/properties/admin/deleteButton" data="{{deleteProperty}}"></firebase-document>
 
     <firebase-query id="query" path="/userPubs" data="{{pubs}}"></firebase-query>
 
@@ -218,7 +219,11 @@
         this.airport = this.pubs.find(pub => pub.id === this.editKey).isAirport;
         this.closed = this.pubs.find(pub => pub.id === this.editKey).PubIsClosed;
 
-        this._isDeleteDisabled(false);
+        if(this.deleteProperty === 'true') {
+          this._isDeleteDisabled(false);
+        } else {
+          this._isDeleteDisabled(true);
+        }
       },
 
       ready: function() {
