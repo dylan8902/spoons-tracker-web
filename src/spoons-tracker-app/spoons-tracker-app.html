@@ -91,6 +91,7 @@
             <a name="map" href="/map">Map</a>
             <a name="tracker" href="/tracker">My visits</a>
             <a name="users" href="/users">Leaderboard</a>
+            <a name="support" href="/support">Support</a>
             <template is="dom-if" if="{{userDetails.isAdmin}}">
               <a name="admin" href="/admin">Admin</a>
             </template>
@@ -117,6 +118,7 @@
           <spoons-tracker-pubs name="pubs" loading="{{loading}}"></spoons-tracker-pubs>
           <spoons-tracker-map name="map" loading="{{loading}}"></spoons-tracker-map>
           <spoons-tracker-tracker name="tracker"></spoons-tracker-tracker>
+          <spoons-tracker-support name="support"></spoons-tracker-support>
           <spoons-tracker-admin name="admin"></spoons-tracker-admin>
         </iron-pages>
       </app-header-layout>

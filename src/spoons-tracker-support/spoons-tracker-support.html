@@ -1,0 +1,45 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="spoons-tracker-support">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+
+    <firebase-auth user="{{user}}" provider="facebook"></firebase-auth>
+    <firebase-query path="/users/[[user.uid]]/visited" data="{{visits}}"></firebase-query>
+    <firebase-query id="query" path="/pubs" data="{{pubs}}"></firebase-query>
+
+    <div style="margin:16px">
+    <h2>Support</h2>
+      <p>If you would like to raise an issue, provide feedback or request a new feature, please email: <a href="mailto:spoonstracker.com@gmail.com?subject=feedback">spoonstracker.com@gmail.com</a></p>
+      <p>If you would like to donate to the developers it would be greatly appreciated, and help provide the following:</p>
+      <ul>
+        <li>New features</li>
+        <li>Automated daily data backups</li>
+        <li>Automated pub updates from the official 'spoons website</li>
+        <li>General help and support</li>
+      </ul>
+      <p>For example: £5 is the monhtly cost of running a server for automatic data backups / data loads</p>
+      <div>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="hosted_button_id" value="SMDZ7R6VLCX3Q">
+          <input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online!">
+          <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+        </form>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'spoons-tracker-support'
+    });
+  </script>
+</dom-module>
